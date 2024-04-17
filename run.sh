@@ -1,8 +1,8 @@
 python pcnn_train.py \
 --batch_size 16 \
 --sample_batch_size 112 \
---sampling_interval 8 \
---save_interval 8 \
+--sampling_interval 16 \
+--save_interval 16 \
 --dataset cpen455 \
 --nr_resnet 1 \
 --nr_filters 20 \
