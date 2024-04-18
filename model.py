@@ -160,30 +160,34 @@ class PixelCNN(nn.Module):
 
         # reshape to B x Vocab_size
         encoding = torch.reshape(encoding, (B, -1))
-        print(encoding)
 
         # Embedding layer with vocab_size 4 and dimension of 32
         embedding = nn.Embedding(num_embeddings=4, embedding_dim=H)
-        print("EMBED MODEL PASSED")
+        # print("EMBED MODEL PASSED")
 
         encoding = encoding.type(torch.LongTensor)
         label_embed = embedding(encoding)
-        print("EMBEDDING PASSED")
-        print(label_embed.shape)
+        # print("EMBEDDING PASSED")
+        # print(label_embed.shape)
 
         # B x H
         label_embed = torch.squeeze(label_embed)
+        print(label_embed)
         
         # B x H x W
         label_embed = label_embed.unsqueeze(-1)
         label_embed = label_embed.expand(B, H, W)
-        print(label_embed.shape)
+        print(label_embed)
+        # print(label_embed.shape)
         
+        # B x D x H x W
         label_embed = label_embed.unsqueeze(1)
         label_embed = label_embed.expand(B, 3, H, W)
         print(label_embed.shape)
 
         print("RESHAPE PASSED")
+
+
 
         if self.init_padding is not sample:
             xs = [int(y) for y in x.size()]
