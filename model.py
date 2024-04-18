@@ -122,6 +122,8 @@ class PixelCNN(nn.Module):
         self.nin_out = nin(nr_filters, num_mix * nr_logistic_mix)
         self.init_padding = None
 
+        self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=32)
+        # self.W = 
 
     def forward(self, x, labels, sample=False):
         # similar as done in the tf repo :
@@ -162,11 +164,10 @@ class PixelCNN(nn.Module):
         encoding = torch.reshape(encoding, (B, -1))
 
         # Embedding layer with vocab_size 4 and dimension of 32
-        embedding = nn.Embedding(num_embeddings=4, embedding_dim=H)
         # print("EMBED MODEL PASSED")
 
         encoding = encoding.type(torch.LongTensor)
-        label_embed = embedding(encoding)
+        label_embed = self.embedding(encoding)
         # print("EMBEDDING PASSED")
         # print(label_embed.shape)
 
@@ -203,8 +204,12 @@ class PixelCNN(nn.Module):
 
         ###      UP PASS    ###
         x = x if sample else torch.cat((x, self.init_padding), 1)
+        # u_list  = [self.u_init(x) + posEnc]
         u_list  = [self.u_init(x)]
         ul_list = [self.ul_init[0](x) + self.ul_init[1](x)]
+
+        print(x.shape) # find the shape, 
+        print(u_list[0].shape)
         for i in range(3):
             # resnet block
             u_out, ul_out = self.up_layers[i](u_list[-1], ul_list[-1])
