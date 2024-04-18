@@ -124,6 +124,7 @@ class PixelCNN(nn.Module):
         # print(x.size())
         # torch.Size([25, 3, 32, 32])
         # B = 25, D = 3, H/W = 32
+        # TODO: take the labels and form them into a vector, using APE?, then pass these vectors into nn.embedding with correct sizes
         if self.init_padding is not sample:
             xs = [int(y) for y in x.size()]
             padding = Variable(torch.ones(xs[0], 1, xs[2], xs[3]), requires_grad=False)
