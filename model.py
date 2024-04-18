@@ -152,7 +152,7 @@ class PixelCNN(nn.Module):
         print(encoding.shape)
 
         # encoding = self.ape(encoding)
-        embedding = nn.Embedding(embedding_dim=H)
+        embedding = nn.Embedding(4, embedding_dim=H)
         print("EMBED MODEL PASSED")
         encoding = encoding.type(torch.LongTensor)
         label_embed = embedding(encoding)
