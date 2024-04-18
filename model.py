@@ -185,6 +185,7 @@ class PixelCNN(nn.Module):
         label_embed = label_embed.expand(B, 3, H, W)
         # print(label_embed.shape)
 
+        # other possibility, reshape to 1 * B * D * 1 * 1 then add
         # print("RESHAPE PASSED")
 
         x = x + label_embed
