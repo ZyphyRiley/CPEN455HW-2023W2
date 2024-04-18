@@ -130,9 +130,9 @@ class PixelCNN(nn.Module):
         # B = 16, D = 3, H/W = 32
         # TODO: take the labels and form them into a vector, using APE?, then pass these vectors into nn.embedding with correct sizes\
         B, D, H, W = x.shape
-        print(x.shape)
-        print("THIS IS THE LABEL")
-        print(labels)
+        # print(x.shape)
+        # print("THIS IS THE LABEL")
+        # print(labels)
 
         encoding = torch.Tensor()
 
@@ -172,22 +172,22 @@ class PixelCNN(nn.Module):
 
         # B x H
         label_embed = torch.squeeze(label_embed)
-        print(label_embed)
+        # print(label_embed)
         
         # B x H x W
         label_embed = label_embed.unsqueeze(-1)
         label_embed = label_embed.expand(B, H, W)
-        print(label_embed)
+        # print(label_embed)
         # print(label_embed.shape)
         
         # B x D x H x W
         label_embed = label_embed.unsqueeze(1)
         label_embed = label_embed.expand(B, 3, H, W)
-        print(label_embed.shape)
+        # print(label_embed.shape)
 
-        print("RESHAPE PASSED")
+        # print("RESHAPE PASSED")
 
-
+        x = x + label_embed
 
         if self.init_padding is not sample:
             xs = [int(y) for y in x.size()]
