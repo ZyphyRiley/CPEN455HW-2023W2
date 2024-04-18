@@ -1,6 +1,28 @@
 import torch.nn as nn
 from layers import *
 
+class AbsolutePositionalEncoding(nn.Module):
+    MAX_LEN = 256
+    def __init__(self, d_model):
+        super().__init__()
+        self.W = nn.Parameter(torch.empty((self.MAX_LEN, d_model)))
+        nn.init.normal_(self.W)
+
+    def forward(self, x):
+        """
+        args:
+            x: shape B x D
+        returns:
+            out: shape B x D
+        START BLOCK
+        """
+        # add rows of matrix self.W[i, :] to position 1 <= i <= N
+        out = x + self.W[:x.shape[1], :]
+        """
+        END BLOCK
+        """
+        return out
+
 
 class PixelCNNLayer_up(nn.Module):
     def __init__(self, nr_resnet, nr_filters, resnet_nonlinearity):
@@ -99,6 +121,9 @@ class PixelCNN(nn.Module):
 
     def forward(self, x, sample=False):
         # similar as done in the tf repo :
+        # print(x.size())
+        # torch.Size([25, 3, 32, 32])
+        # B = 25, D = 3, H/W = 32
         if self.init_padding is not sample:
             xs = [int(y) for y in x.size()]
             padding = Variable(torch.ones(xs[0], 1, xs[2], xs[3]), requires_grad=False)
