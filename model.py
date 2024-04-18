@@ -146,7 +146,7 @@ class PixelCNN(nn.Module):
             else:
                 encoding = torch.cat((encoding, torch.tensor([0, 0, 0, 1])), 0)
 
-        encoding = torch.reshape(encoding, (-1, D))
+        encoding = torch.reshape(encoding, (B, -1))
         print("THIS IS THE ENCODING")
         print(encoding)
         print(encoding.shape)
