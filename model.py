@@ -150,13 +150,13 @@ class PixelCNN(nn.Module):
         # numerical version
         for label in labels:
             if label == "Class0":
-                encoding = torch.cat((encoding, 0), 0)
+                encoding = torch.cat((encoding, torch.Tensor[0]), 0)
             elif label == "Class1":
-                encoding = torch.cat((encoding, 1), 0)
+                encoding = torch.cat((encoding, torch.Tensor[1]), 0)
             elif label == "Class2":
-                encoding = torch.cat((encoding, 2), 0)
+                encoding = torch.cat((encoding, torch.Tensor[2]), 0)
             else:
-                encoding = torch.cat((encoding, 3), 0)
+                encoding = torch.cat((encoding, torch.Tensor[3]), 0)
 
         encoding = torch.reshape(encoding, (B, -1))
         print(encoding)
