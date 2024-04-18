@@ -17,7 +17,8 @@ class AbsolutePositionalEncoding(nn.Module):
         START BLOCK
         """
         # add rows of matrix self.W[i, :] to position 1 <= i <= N
-        out = x + self.W[:x.shape[1], :]
+        B, D = x.shape
+        out = x + self.W[:B, :]
         """
         END BLOCK
         """
@@ -87,6 +88,9 @@ class PixelCNN(nn.Module):
         self.right_shift_pad = nn.ZeroPad2d((1, 0, 0, 0))
         self.down_shift_pad  = nn.ZeroPad2d((0, 0, 1, 0))
 
+        # absolute positional encoding
+        self.ape = AbsolutePositionalEncoding(input_channels)
+
         down_nr_resnet = [nr_resnet] + [nr_resnet + 1] * 2
         self.down_layers = nn.ModuleList([PixelCNNLayer_down(down_nr_resnet[i], nr_filters,
                                                 self.resnet_nonlinearity) for i in range(3)])
@@ -119,12 +123,14 @@ class PixelCNN(nn.Module):
         self.init_padding = None
 
 
-    def forward(self, x, sample=False):
+    def forward(self, x, label, sample=False):
         # similar as done in the tf repo :
         # print(x.size())
         # torch.Size([25, 3, 32, 32])
         # B = 25, D = 3, H/W = 32
         # TODO: take the labels and form them into a vector, using APE?, then pass these vectors into nn.embedding with correct sizes
+        print(label)
+        label = self.ape(label)
         if self.init_padding is not sample:
             xs = [int(y) for y in x.size()]
             padding = Variable(torch.ones(xs[0], 1, xs[2], xs[3]), requires_grad=False)
