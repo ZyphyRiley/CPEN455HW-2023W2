@@ -127,9 +127,10 @@ class PixelCNN(nn.Module):
         # similar as done in the tf repo :
         # print(x.size())
         # torch.Size([25, 3, 32, 32])
-        # B = 25, D = 3, H/W = 32
+        # B = 16, D = 3, H/W = 32
         # TODO: take the labels and form them into a vector, using APE?, then pass these vectors into nn.embedding with correct sizes\
         B, D, H, W = x.shape
+        print(x.shape)
         print("THIS IS THE LABEL")
         print(labels)
 
