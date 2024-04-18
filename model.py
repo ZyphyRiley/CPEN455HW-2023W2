@@ -150,7 +150,10 @@ class PixelCNN(nn.Module):
         print(encoding)
         print(encoding.shape)
 
-        encoding = self.ape(encoding)
+        # encoding = self.ape(encoding)
+        embedding = nn.Embedding(B, H)
+        label_embed = embedding(encoding)
+        print(label_embed.shape)
         if self.init_padding is not sample:
             xs = [int(y) for y in x.size()]
             padding = Variable(torch.ones(xs[0], 1, xs[2], xs[3]), requires_grad=False)
