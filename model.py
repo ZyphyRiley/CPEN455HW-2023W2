@@ -124,7 +124,7 @@ class PixelCNN(nn.Module):
         self.init_padding = None
 
 
-    def forward(self, x, sample=False):
+    def forward(self, x, label, sample=False):
         # similar as done in the tf repo :
         # print(x.size())
         # torch.Size([25, 3, 32, 32])
