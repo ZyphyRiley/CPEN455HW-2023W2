@@ -136,7 +136,7 @@ class PixelCNN(nn.Module):
 
         encoding = torch.Tensor()
 
-        # one hot version
+        # one hot version, use with learnable weight matrix
         # for label in labels:
         #     if label == "Class0":
         #         encoding = torch.cat((encoding, torch.tensor([1, 0, 0, 0])), 0)
@@ -147,7 +147,7 @@ class PixelCNN(nn.Module):
         #     else:
         #         encoding = torch.cat((encoding, torch.tensor([0, 0, 0, 1])), 0)
 
-        # numerical version
+        # numerical version, use with nn.Embedding
         for label in labels:
             if label == "Class0":
                 encoding = torch.cat((encoding, torch.Tensor([0])), 0)
@@ -165,11 +165,26 @@ class PixelCNN(nn.Module):
         # Embedding layer with vocab_size 4 and dimension of 32
         embedding = nn.Embedding(num_embeddings=4, embedding_dim=H)
         print("EMBED MODEL PASSED")
+
         encoding = encoding.type(torch.LongTensor)
         label_embed = embedding(encoding)
-        print(label_embed)
         print("EMBEDDING PASSED")
         print(label_embed.shape)
+
+        # B x H
+        label_embed = torch.squeeze(label_embed)
+        
+        # B x H x W
+        label_embed = label_embed.unsqueeze(-1)
+        label_embed = label_embed.expand(B, H, W)
+        print(label_embed.shape)
+        
+        label_embed = label_embed.unsqueeze(1)
+        label_embed = label_embed.expand(B, 3, H, W)
+        print(label_embed.shape)
+
+        print("RESHAPE PASSED")
+
         if self.init_padding is not sample:
             xs = [int(y) for y in x.size()]
             padding = Variable(torch.ones(xs[0], 1, xs[2], xs[3]), requires_grad=False)
