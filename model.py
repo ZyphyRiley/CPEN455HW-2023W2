@@ -152,7 +152,9 @@ class PixelCNN(nn.Module):
 
         # encoding = self.ape(encoding)
         embedding = nn.Embedding(B, H)
+        print("EMBED MODEL PASSED")
         label_embed = embedding(encoding)
+        print("EMBEDDING PASSED")
         print(label_embed.shape)
         if self.init_padding is not sample:
             xs = [int(y) for y in x.size()]
