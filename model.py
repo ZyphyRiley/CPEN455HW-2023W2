@@ -150,18 +150,19 @@ class PixelCNN(nn.Module):
         # numerical version
         for label in labels:
             if label == "Class0":
-                encoding = torch.cat((encoding, torch.Tensor[0]), 0)
+                encoding = torch.cat((encoding, torch.Tensor([0])), 0)
             elif label == "Class1":
-                encoding = torch.cat((encoding, torch.Tensor[1]), 0)
+                encoding = torch.cat((encoding, torch.Tensor([1])), 0)
             elif label == "Class2":
-                encoding = torch.cat((encoding, torch.Tensor[2]), 0)
+                encoding = torch.cat((encoding, torch.Tensor([2])), 0)
             else:
-                encoding = torch.cat((encoding, torch.Tensor[3]), 0)
+                encoding = torch.cat((encoding, torch.Tensor([3])), 0)
 
+        # reshape to B x Vocab_size
         encoding = torch.reshape(encoding, (B, -1))
         print(encoding)
 
-        # encoding = self.ape(encoding)
+        # Embedding layer with vocab_size 4 and dimension of 32
         embedding = nn.Embedding(num_embeddings=4, embedding_dim=H)
         print("EMBED MODEL PASSED")
         encoding = encoding.type(torch.LongTensor)
