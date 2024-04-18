@@ -124,14 +124,33 @@ class PixelCNN(nn.Module):
         self.init_padding = None
 
 
-    def forward(self, x, label, sample=False):
+    def forward(self, x, labels, sample=False):
         # similar as done in the tf repo :
         # print(x.size())
         # torch.Size([25, 3, 32, 32])
         # B = 25, D = 3, H/W = 32
-        # TODO: take the labels and form them into a vector, using APE?, then pass these vectors into nn.embedding with correct sizes
+        # TODO: take the labels and form them into a vector, using APE?, then pass these vectors into nn.embedding with correct sizes\
+        B, D, H, W = x.shape
+        print("THIS IS THE LABEL")
         print(label)
-        label = self.ape(x)
+
+        encoding = torch.Tensor()
+
+        for label in labels:
+            if label == "Class0":
+                encoding = torch.cat((encoding, torch.tensor([1, 0, 0, 0])), 0)
+            elif label == "Class1":
+                encoding = torch.cat((encoding, torch.tensor([0, 1, 0, 0])), 0)
+            elif label == "Class2":
+                encoding = torch.cat((encoding, torch.tensor([0, 0, 1, 0])), 0)
+            else:
+                encoding = torch.cat((encoding, torch.tensor([0, 0, 0, 1])), 0)
+
+        print("THIS IS THE ENCODING")
+        print(encoding)
+        print(encoding.shape)
+
+        label = self.ape(y)
         if self.init_padding is not sample:
             xs = [int(y) for y in x.size()]
             padding = Variable(torch.ones(xs[0], 1, xs[2], xs[3]), requires_grad=False)
