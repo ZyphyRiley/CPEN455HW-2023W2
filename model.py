@@ -147,15 +147,13 @@ class PixelCNN(nn.Module):
                 encoding = torch.cat((encoding, torch.tensor([0, 0, 0, 1])), 0)
 
         encoding = torch.reshape(encoding, (B, -1))
-        print("THIS IS THE ENCODING")
-        print(encoding)
-        print(encoding.shape)
 
         # encoding = self.ape(encoding)
-        embedding = nn.Embedding(4, embedding_dim=H)
+        embedding = nn.Embedding(num_embeddings=4, embedding_dim=H)
         print("EMBED MODEL PASSED")
         encoding = encoding.type(torch.LongTensor)
         label_embed = embedding(encoding)
+        print(label_embed)
         print("EMBEDDING PASSED")
         print(label_embed.shape)
         if self.init_padding is not sample:
