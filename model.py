@@ -136,17 +136,30 @@ class PixelCNN(nn.Module):
 
         encoding = torch.Tensor()
 
+        # one hot version
+        # for label in labels:
+        #     if label == "Class0":
+        #         encoding = torch.cat((encoding, torch.tensor([1, 0, 0, 0])), 0)
+        #     elif label == "Class1":
+        #         encoding = torch.cat((encoding, torch.tensor([0, 1, 0, 0])), 0)
+        #     elif label == "Class2":
+        #         encoding = torch.cat((encoding, torch.tensor([0, 0, 1, 0])), 0)
+        #     else:
+        #         encoding = torch.cat((encoding, torch.tensor([0, 0, 0, 1])), 0)
+
+        # numerical version
         for label in labels:
             if label == "Class0":
-                encoding = torch.cat((encoding, torch.tensor([1, 0, 0, 0])), 0)
+                encoding = torch.cat((encoding, 0), 0)
             elif label == "Class1":
-                encoding = torch.cat((encoding, torch.tensor([0, 1, 0, 0])), 0)
+                encoding = torch.cat((encoding, 1), 0)
             elif label == "Class2":
-                encoding = torch.cat((encoding, torch.tensor([0, 0, 1, 0])), 0)
+                encoding = torch.cat((encoding, 2), 0)
             else:
-                encoding = torch.cat((encoding, torch.tensor([0, 0, 0, 1])), 0)
+                encoding = torch.cat((encoding, 3), 0)
 
         encoding = torch.reshape(encoding, (B, -1))
+        print(encoding)
 
         # encoding = self.ape(encoding)
         embedding = nn.Embedding(num_embeddings=4, embedding_dim=H)
