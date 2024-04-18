@@ -132,7 +132,7 @@ class PixelCNN(nn.Module):
         # TODO: take the labels and form them into a vector, using APE?, then pass these vectors into nn.embedding with correct sizes\
         B, D, H, W = x.shape
         print("THIS IS THE LABEL")
-        print(label)
+        print(labels)
 
         encoding = torch.Tensor()
 
