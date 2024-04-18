@@ -208,8 +208,8 @@ class PixelCNN(nn.Module):
         u_list  = [self.u_init(x)]
         ul_list = [self.ul_init[0](x) + self.ul_init[1](x)]
 
-        print(x.shape) # find the shape, 
-        print(u_list[0].shape)
+        # print(x.shape) # find the shape, 
+        # print(u_list[0].shape)
         for i in range(3):
             # resnet block
             u_out, ul_out = self.up_layers[i](u_list[-1], ul_list[-1])
