@@ -17,7 +17,6 @@ class AbsolutePositionalEncoding(nn.Module):
         START BLOCK
         """
         # add rows of matrix self.W[i, :] to position 1 <= i <= N
-        x = np.array(x)
         B, D = x.shape
         out = x + self.W[:B, :]
         """
