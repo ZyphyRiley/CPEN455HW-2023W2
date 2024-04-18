@@ -146,11 +146,12 @@ class PixelCNN(nn.Module):
             else:
                 encoding = torch.cat((encoding, torch.tensor([0, 0, 0, 1])), 0)
 
+        encoding = torch.reshape(encoding, (-1, D))
         print("THIS IS THE ENCODING")
         print(encoding)
         print(encoding.shape)
 
-        label = self.ape(y)
+        encoding = self.ape(encoding)
         if self.init_padding is not sample:
             xs = [int(y) for y in x.size()]
             padding = Variable(torch.ones(xs[0], 1, xs[2], xs[3]), requires_grad=False)
