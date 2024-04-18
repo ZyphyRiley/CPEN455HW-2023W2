@@ -220,29 +220,29 @@ if __name__ == '__main__':
                       epoch = epoch,
                       mode = 'val')
         
-        if epoch % args.sampling_interval == 0:
-            print('......sampling......')
-            for label in my_bidict.keys():
-                print(label)
-                label = args.sample_batch_size * label
-                print(label)
-                sample_t = sample(model, label, args.sample_batch_size, args.obs, sample_op)
-                sample_t = rescaling_inv(sample_t)
-                save_images(sample_t, args.sample_dir)
-                sample_result = wandb.Image(sample_t, caption="epoch {}".format(epoch))
+        # if epoch % args.sampling_interval == 0:
+        #     print('......sampling......')
+        #     for label in my_bidict.keys():
+        #         print(label)
+        #         label = args.sample_batch_size * label
+        #         print(label)
+        #         sample_t = sample(model, label, args.sample_batch_size, args.obs, sample_op)
+        #         sample_t = rescaling_inv(sample_t)
+        #         save_images(sample_t, args.sample_dir)
+        #         sample_result = wandb.Image(sample_t, caption="epoch {}".format(epoch))
             
-            gen_data_dir = args.sample_dir
-            ref_data_dir = args.data_dir +'/test'
-            paths = [gen_data_dir, ref_data_dir]
-            try:
-                fid_score = calculate_fid_given_paths(paths, 32, device, dims=192)
-                print("Dimension {:d} works! fid score: {}".format(192, fid_score))
-            except:
-                print("Dimension {:d} fails!".format(192))
+        #     gen_data_dir = args.sample_dir
+        #     ref_data_dir = args.data_dir +'/test'
+        #     paths = [gen_data_dir, ref_data_dir]
+        #     try:
+        #         fid_score = calculate_fid_given_paths(paths, 32, device, dims=192)
+        #         print("Dimension {:d} works! fid score: {}".format(192, fid_score))
+        #     except:
+        #         print("Dimension {:d} fails!".format(192))
                 
-            if args.en_wandb:
-                wandb.log({"samples": sample_result,
-                            "FID": fid_score})
+        #     if args.en_wandb:
+        #         wandb.log({"samples": sample_result,
+        #                     "FID": fid_score})
         
         if (epoch + 1) % args.save_interval == 0: 
             if not os.path.exists("models"):
