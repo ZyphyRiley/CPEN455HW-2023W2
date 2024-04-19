@@ -151,13 +151,13 @@ class PixelCNN(nn.Module):
         # change all labels into indices
         for label in labels:
             if label == "Class0":
-                encoding = encoding.append(0)
+                indices.append(0)
             elif label == "Class1":
-                encoding = encoding.append(1)
+                indices.append(1)
             elif label == "Class2":
-                encoding = encoding.append(2)
+                indices.append(2)
             else:
-                encoding = encoding.append(3)
+                indices.append(3)
 
         tensor_indices = torch.LongTensor(indices).to(device)
 
