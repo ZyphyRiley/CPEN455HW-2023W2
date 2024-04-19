@@ -88,9 +88,6 @@ class PixelCNN(nn.Module):
         self.right_shift_pad = nn.ZeroPad2d((1, 0, 0, 0))
         self.down_shift_pad  = nn.ZeroPad2d((0, 0, 1, 0))
 
-        # absolute positional encoding
-        self.ape = AbsolutePositionalEncoding(input_channels)
-
         down_nr_resnet = [nr_resnet] + [nr_resnet + 1] * 2
         self.down_layers = nn.ModuleList([PixelCNNLayer_down(down_nr_resnet[i], nr_filters,
                                                 self.resnet_nonlinearity) for i in range(3)])
@@ -123,7 +120,9 @@ class PixelCNN(nn.Module):
         self.init_padding = None
 
         self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=nr_filters)
-        self.W = nn.Parameter(torch.empty((256, 4)))
+
+        # absolute positional encoding
+        self.ape = AbsolutePositionalEncoding(nr_filters)
 
     def forward(self, x, labels, sample=False):
         # similar as done in the tf repo :
@@ -140,37 +139,39 @@ class PixelCNN(nn.Module):
         encoding = torch.Tensor().to(device)
 
         # one hot version, use with learnable weight matrix
-        # for label in labels:
-        #     if label == "Class0":
-        #         encoding = torch.cat((encoding, torch.tensor([1, 0, 0, 0])), 0)
-        #     elif label == "Class1":
-        #         encoding = torch.cat((encoding, torch.tensor([0, 1, 0, 0])), 0)
-        #     elif label == "Class2":
-        #         encoding = torch.cat((encoding, torch.tensor([0, 0, 1, 0])), 0)
-        #     else:
-        #         encoding = torch.cat((encoding, torch.tensor([0, 0, 0, 1])), 0)
-
-        # numerical version, use with nn.Embedding
         for label in labels:
             if label == "Class0":
-                encoding = torch.cat((encoding, torch.Tensor([0]).to(device)), 0)
+                encoding = torch.cat((encoding, torch.tensor([1, 0, 0, 0])), 0)
             elif label == "Class1":
-                encoding = torch.cat((encoding, torch.Tensor([1]).to(device)), 0)
+                encoding = torch.cat((encoding, torch.tensor([0, 1, 0, 0])), 0)
             elif label == "Class2":
-                encoding = torch.cat((encoding, torch.Tensor([2]).to(device)), 0)
+                encoding = torch.cat((encoding, torch.tensor([0, 0, 1, 0])), 0)
             else:
-                encoding = torch.cat((encoding, torch.Tensor([3]).to(device)), 0)
+                encoding = torch.cat((encoding, torch.tensor([0, 0, 0, 1])), 0)
 
-        # reshape to B x Vocab_size
+        # numerical version, use with nn.Embedding
+        # for label in labels:
+        #     if label == "Class0":
+        #         encoding = torch.cat((encoding, torch.Tensor([0]).to(device)), 0)
+        #     elif label == "Class1":
+        #         encoding = torch.cat((encoding, torch.Tensor([1]).to(device)), 0)
+        #     elif label == "Class2":
+        #         encoding = torch.cat((encoding, torch.Tensor([2]).to(device)), 0)
+        #     else:
+        #         encoding = torch.cat((encoding, torch.Tensor([3]).to(device)), 0)
+
+        # reshape to B x Vocab_size (B x 4)
         encoding = torch.reshape(encoding, (B, -1))
         #print(encoding.shape)
 
         # Embedding layer with vocab_size 4 and dimension of 20
         # print("EMBED MODEL PASSED")
-        encoding = (encoding.type(torch.LongTensor)).to(device)
-        label_embed = self.embedding(encoding).to(device)
+        # encoding = (encoding.type(torch.LongTensor)).to(device)
+        # label_embed = self.embedding(encoding).to(device)
         # print("EMBEDDING PASSED")
         # print(label_embed.shape)
+
+        label_embed = self.ape(encoding).to(device)
 
         # B x D
         label_embed = torch.squeeze(label_embed)
@@ -179,7 +180,7 @@ class PixelCNN(nn.Module):
         # B x D x 1 x 1
         label_embed = torch.unsqueeze(label_embed, -1)
         label_embed = torch.unsqueeze(label_embed, -1)
-        #print("label embed: ", label_embed.shape)
+        print("label embed: ", label_embed.shape)
         
         # # B x H x W
         # label_embed = label_embed.unsqueeze(-1)
