@@ -162,7 +162,7 @@ class PixelCNN(nn.Module):
 
         # reshape to B x Vocab_size
         encoding = torch.reshape(encoding, (B, -1))
-        print(encoding.shape)
+        #print(encoding.shape)
 
         # Embedding layer with vocab_size 4 and dimension of 20
         # print("EMBED MODEL PASSED")
@@ -175,9 +175,10 @@ class PixelCNN(nn.Module):
         label_embed = torch.squeeze(label_embed)
         # print(label_embed)
 
+        # B x D x 1 x 1
         label_embed = torch.unsqueeze(label_embed, -1)
         label_embed = torch.unsqueeze(label_embed, -1)
-        print("label embed: ", label_embed.shape)
+        #print("label embed: ", label_embed.shape)
         
         # # B x H x W
         # label_embed = label_embed.unsqueeze(-1)
@@ -209,12 +210,12 @@ class PixelCNN(nn.Module):
         ###      UP PASS    ###
         x = x if sample else torch.cat((x, self.init_padding), 1)
         # u_list  = [self.u_init(x) + posEnc]
-        u_list  = [self.u_init(x)]
-        ul_list = [self.ul_init[0](x) + self.ul_init[1](x)]
+        u_list  = [self.u_init(x) + label_embed]
+        ul_list = [self.ul_init[0](x) + self.ul_init[1](x) + label_embed]
 
-        print("x.shape: ", x.shape) # find the shape, 
-        print("u_list[0].shape: ", u_list[0].shape)
-        print("ul_list[0].shape: ", ul_list[0].shape)
+        # print("x.shape: ", x.shape) # find the shape, 
+        # print("u_list[0].shape: ", u_list[0].shape)
+        # print("ul_list[0].shape: ", ul_list[0].shape)
         for i in range(3):
             # resnet block
             u_out, ul_out = self.up_layers[i](u_list[-1], ul_list[-1])
