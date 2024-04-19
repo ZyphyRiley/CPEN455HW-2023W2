@@ -67,7 +67,6 @@ if __name__ == '__main__':
     model = random_classifier(NUM_CLASSES)
     # model = PixelCNN(nr_resnet=args.nr_resnet, nr_filters=args.nr_filters, 
     #            input_channels=input_channels, nr_logistic_mix=args.nr_logistic_mix)
-    #model = model.to(device)
     #End of your code
     
     model = model.to(device)
