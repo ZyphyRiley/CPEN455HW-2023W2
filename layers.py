@@ -133,9 +133,10 @@ class gated_resnet(nn.Module):
 
     def forward(self, og_x, y, a=None):
         x = self.conv_input(self.nonlinearity(og_x))
-        y = torch.unsqueeze(torch.unsqueeze(self.embedding(y), -1), -1).expand(-1, -1, x.size(2), x.size(3)) # expand to B, D, H, W
+        y = torch.unsqueeze(torch.unsqueeze(self.embedding(y), -1), -1).expand(-1, -1, x.shape[2], x.shape[3]) # expand to B, D, H, W
 
         x = torch.cat([x, y], dim=1)
+        print(x.shape)
 
         if a is not None :
             x += self.nin_skip(self.nonlinearity(a))
