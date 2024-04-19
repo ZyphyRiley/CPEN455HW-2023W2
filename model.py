@@ -161,7 +161,7 @@ class PixelCNN(nn.Module):
         label_embed = self.embedding(tensor_indices).to(device)
 
         label_embed = label_embed.unsqueeze(-1)
-        label_embed = label_embed.unsqueeze(-1)
+        label_embed = label_embed.unsqueeze(-1).to(device)
 
         if self.init_padding is not sample:
             xs = [int(y) for y in x.size()]
