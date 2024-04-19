@@ -20,7 +20,7 @@ class AbsolutePositionalEncoding(nn.Module):
         B, D = x.shape
         # 16, 20
 
-        print("B, D:", B, D)
+        #print("B, D:", B, D)
 
         # ChatGPT used to ask for efficient way to convert using B x N x D to B x D
         indices = torch.arange(B).unsqueeze(1)
@@ -31,7 +31,7 @@ class AbsolutePositionalEncoding(nn.Module):
         # positional_encodings now holds [[self.W[0,:]], [self.W[1,:]], ..., [self.W[B-1,:]]]
         # print("positional_encodings: ", positional_encodings.shape)
         positional_encodings = positional_encodings.squeeze()
-        print("positional_encodings: ", positional_encodings.shape)
+        #print("positional_encodings: ", positional_encodings.shape)
         # Add positional encodings to input x
         out = x + positional_encodings
         """
@@ -139,6 +139,8 @@ class PixelCNN(nn.Module):
 
         # absolute positional encoding
         self.ape = AbsolutePositionalEncoding(nr_filters)
+
+        # encode vocab size to model dimensions
         self.enc_W = nn.Parameter(torch.empty((4, nr_filters)))
 
     def forward(self, x, labels, sample=False):
