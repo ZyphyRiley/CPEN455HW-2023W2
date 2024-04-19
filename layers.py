@@ -129,7 +129,7 @@ class gated_resnet(nn.Module):
         self.conv_out = conv_op(2 * num_filters, 2 * num_filters)
 
 
-    def forward(self, og_x, a=None):
+    def forward(self, og_x, embed, a=None):
         x = self.conv_input(self.nonlinearity(og_x))
         if a is not None :
             x += self.nin_skip(self.nonlinearity(a))
@@ -137,6 +137,5 @@ class gated_resnet(nn.Module):
         x = self.dropout(x)
         x = self.conv_out(x)
         a, b = torch.chunk(x, 2, dim=1)
-        print("a, b shape:", a.shape, b.shape)
-        c3 = a * F.sigmoid(b)
+        c3 = a * F.sigmoid(b + embed)
         return og_x + c3
