@@ -156,9 +156,9 @@ class PixelCNN(nn.Module):
         # Con't from ChatGPT, convert the label data into indices for use in nn.Embedding
         indices = [label_to_index[label] for label in labels]
 
-        tensor_indices = torch.LongTensor(indices)
+        tensor_indices = torch.LongTensor(indices).to(device)
 
-        label_embed = self.embedding(tensor_indices)
+        label_embed = self.embedding(tensor_indices).to(device)
 
         label_embed = label_embed.unsqueeze(-1)
         label_embed = label_embed.unsqueeze(-1)
