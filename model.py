@@ -125,7 +125,6 @@ class PixelCNN(nn.Module):
         self.init_padding = None
 
         # self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=nr_filters)
-        self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=nr_filters)
 
         # absolute positional encoding
         self.ape = AbsolutePositionalEncoding(40)
