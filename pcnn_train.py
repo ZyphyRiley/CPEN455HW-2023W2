@@ -223,8 +223,8 @@ if __name__ == '__main__':
         if epoch % args.sampling_interval == 0:
             print('......sampling......')
             for label in my_bidict.keys():
-                print(label)
-                label = args.sample_batch_size * label
+                print(label, )
+                label = (label,) * args.sample_batch_size
                 print(label)
                 sample_t = sample(model, label, args.sample_batch_size, args.obs, sample_op)
                 sample_t = rescaling_inv(sample_t)
