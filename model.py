@@ -31,7 +31,7 @@ class AbsolutePositionalEncoding(nn.Module):
         # positional_encodings now holds [[self.W[0,:]], [self.W[1,:]], ..., [self.W[B-1,:]]]
         # print("positional_encodings: ", positional_encodings.shape)
         positional_encodings = positional_encodings.squeeze()
-        
+        print("positional_encodings: ", positional_encodings.shape)
         # Add positional encodings to input x
         out = x + positional_encodings
         """
