@@ -18,6 +18,7 @@ class AbsolutePositionalEncoding(nn.Module):
         """
         # add rows of matrix self.W[i, :] to position 1 <= i <= N
         B, D = x.shape
+        # 16, 4
 
         print(B, D)
 
@@ -184,6 +185,7 @@ class PixelCNN(nn.Module):
         # print(label_embed.shape)
 
         label_embed = self.ape(encoding).to(device)
+        print(label_embed.shape)
 
         # B x D
         label_embed = torch.squeeze(label_embed)
