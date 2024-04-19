@@ -211,8 +211,8 @@ class PixelCNN(nn.Module):
         u_list  = [self.u_init(x)]
         ul_list = [self.ul_init[0](x) + self.ul_init[1](x)]
         
-        u_list[0] = u_list[0] + label_embed
-        ul_list[0] = ul_list[0] + label_embed
+        # u_list[0] = u_list[0] + label_embed
+        # ul_list[0] = ul_list[0] + label_embed
 
         # print("x.shape: ", x.shape) # find the shape, 
         # print("u_list[0].shape: ", u_list[0].shape)
@@ -243,6 +243,8 @@ class PixelCNN(nn.Module):
                 ul = self.upsize_ul_stream[i](ul)
 
         x_out = self.nin_out(F.elu(ul))
+        print(x_out.shape)
+        x_out = x_out + label_embed
 
         assert len(u_list) == len(ul_list) == 0, pdb.set_trace()
 
