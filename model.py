@@ -159,7 +159,7 @@ class PixelCNN(nn.Module):
 
         label_embed = torch.LongTensor(indices).to(device)
 
-        # label_embed = self.embedding(y).to(device)
+        label_embed = self.embedding(label_embed).to(device)
 
 
         # label_embed = label_embed.unsqueeze(-1)
@@ -191,7 +191,7 @@ class PixelCNN(nn.Module):
         ## APE SOLUTION ##
 
         label_embed = label_embed.unsqueeze(-1)
-        label_embed = label_embed.unsqueeze(-1).to(device)
+        label_embed = label_embed.unsqueeze(-1).expand(B, -1, 32, 32).to(device)
 
         if self.init_padding is not sample:
             xs = [int(y) for y in x.size()]
