@@ -178,20 +178,20 @@ class PixelCNN(nn.Module):
 
         for label in labels:
             if label == "Class0":
-                encoding = torch.cat((encoding, torch.tensor([1, 0, 0, 0])), 0)
+                encoding = torch.cat((encoding, torch.tensor([1, 0, 0, 0]).to(device)), 0)
             elif label == "Class1":
-                encoding = torch.cat((encoding, torch.tensor([0, 1, 0, 0])), 0)
+                encoding = torch.cat((encoding, torch.tensor([0, 1, 0, 0]).to(device)), 0)
             elif label == "Class2":
-                encoding = torch.cat((encoding, torch.tensor([0, 0, 1, 0])), 0)
+                encoding = torch.cat((encoding, torch.tensor([0, 0, 1, 0]).to(device)), 0)
             else:
-                encoding = torch.cat((encoding, torch.tensor([0, 0, 0, 1])), 0)
+                encoding = torch.cat((encoding, torch.tensor([0, 0, 0, 1]).to(device)), 0)
         #
                 
         encoding = torch.reshape(encoding, (B, -1))
                 
         out = torch.matmul(encoding, self.enc_W)
 
-        label_embed = self.ape(out)
+        label_embed = self.ape(out).to(device)
 
         ## APE SOLUTION ##
 
