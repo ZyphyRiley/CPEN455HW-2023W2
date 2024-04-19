@@ -146,15 +146,18 @@ class PixelCNN(nn.Module):
         B, D, H, W = x.shape
         device = x.device
 
-        encoding = torch.Tensor().to(device)
+        indices = []
 
-        classes = ["Class0", "Class1", "Class2", "Class3"]
-
-        # Taken from ChatGPT, how to associate an index with a label (ex. Class0 to 0)
-        label_to_index = {label: idx for idx, label in enumerate(classes)}
-
-        # Con't from ChatGPT, convert the label data into indices for use in nn.Embedding
-        indices = [label_to_index[label] for label in labels]
+        # change all labels into indices
+        for label in labels:
+            if label == "Class0":
+                encoding = encoding.append(0)
+            elif label == "Class1":
+                encoding = encoding.append(1)
+            elif label == "Class2":
+                encoding = encoding.append(2)
+            else:
+                encoding = encoding.append(3)
 
         tensor_indices = torch.LongTensor(indices).to(device)
 
