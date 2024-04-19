@@ -123,7 +123,7 @@ class PixelCNN(nn.Module):
         self.init_padding = None
 
         self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=nr_filters)
-        self.W = nn.Parameter(torch.empty((self.MAX_LEN, 4)))
+        self.W = nn.Parameter(torch.empty((256, 4)))
 
     def forward(self, x, labels, sample=False):
         # similar as done in the tf repo :
