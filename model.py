@@ -122,7 +122,7 @@ class PixelCNN(nn.Module):
         self.nin_out = nin(nr_filters, num_mix * nr_logistic_mix)
         self.init_padding = None
 
-        self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=32)
+        self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=nr_filters)
         # self.W = 
 
     def forward(self, x, labels, sample=False):
@@ -162,34 +162,38 @@ class PixelCNN(nn.Module):
 
         # reshape to B x Vocab_size
         encoding = torch.reshape(encoding, (B, -1))
+        print(encoding.shape)
 
-        # Embedding layer with vocab_size 4 and dimension of 32
+        # Embedding layer with vocab_size 4 and dimension of 20
         # print("EMBED MODEL PASSED")
-
         encoding = encoding.type(torch.LongTensor)
         label_embed = self.embedding(encoding)
         # print("EMBEDDING PASSED")
         # print(label_embed.shape)
 
-        # B x H
+        # B x D
         label_embed = torch.squeeze(label_embed)
         # print(label_embed)
+
+        label_embed = torch.unsqueeze(label_embed, -1)
+        label_embed = torch.unsqueeze(label_embed, -1)
+        print("label embed: " + label_embed.shape)
         
-        # B x H x W
-        label_embed = label_embed.unsqueeze(-1)
-        label_embed = label_embed.expand(B, H, W)
-        # print(label_embed)
-        # print(label_embed.shape)
+        # # B x H x W
+        # label_embed = label_embed.unsqueeze(-1)
+        # label_embed = label_embed.expand(B, H, W)
+        # # print(label_embed)
+        # # print(label_embed.shape)
         
-        # B x D x H x W
-        label_embed = label_embed.unsqueeze(1)
-        label_embed = label_embed.expand(B, 3, H, W)
+        # # B x D x H x W
+        # label_embed = label_embed.unsqueeze(1)
+        # label_embed = label_embed.expand(B, 3, H, W)
         # print(label_embed.shape)
 
         # other possibility, reshape to 1 * B * D * 1 * 1 then add
         # print("RESHAPE PASSED")
 
-        x = x + label_embed
+        # x = x + label_embed
 
         if self.init_padding is not sample:
             xs = [int(y) for y in x.size()]
@@ -208,8 +212,9 @@ class PixelCNN(nn.Module):
         u_list  = [self.u_init(x)]
         ul_list = [self.ul_init[0](x) + self.ul_init[1](x)]
 
-        # print(x.shape) # find the shape, 
-        # print(u_list[0].shape)
+        print("x.shape: " + x.shape) # find the shape, 
+        print("u_list[0].shape: " + u_list[0].shape)
+        print("ul_list[0].shape: " + ul_list[0].shape)
         for i in range(3):
             # resnet block
             u_out, ul_out = self.up_layers[i](u_list[-1], ul_list[-1])
