@@ -128,7 +128,7 @@ class PixelCNN(nn.Module):
         self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=nr_filters)
 
         # absolute positional encoding
-        self.ape = AbsolutePositionalEncoding(nr_filters)
+        self.ape = AbsolutePositionalEncoding(40)
 
         # encode vocab size to model dimensions
         self.enc_W = nn.Parameter(torch.empty((4, nr_filters)))
