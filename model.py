@@ -29,6 +29,7 @@ class AbsolutePositionalEncoding(nn.Module):
         # Use indices to slice self.W for each row in x
         positional_encodings = self.W[indices]  # Shape: B x D
         # positional_encodings now holds [[self.W[0,:]], [self.W[1,:]], ..., [self.W[B-1,:]]]
+        print("positional_encodings: ", positional_encodings.shape)
         
         # Add positional encodings to input x
         out = x + positional_encodings
