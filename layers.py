@@ -135,20 +135,15 @@ class gated_resnet(nn.Module):
         x = self.conv_input(self.nonlinearity(og_x))
         y = torch.unsqueeze(torch.unsqueeze(self.embedding(y), -1), -1)
 
-        print("x and y:", x.shape, y.shape)
         # x = x + y
         if a is not None :
             x += self.nin_skip(self.nonlinearity(a))
         x = self.nonlinearity(x)
         x = self.dropout(x)
         x = self.conv_out(x)
-        print("x and y:", x.shape, y.shape)
 
         a, b = torch.chunk(x, 2, dim=1)
         c, d = torch.chunk(y, 2, dim=1)
-
-        print("a and b:", a.shape, b.shape)
-        print("c and d:", c.shape, d.shape)
 
         f = torch.tanh(a + c)
         g = torch.sigmoid(b + d)
