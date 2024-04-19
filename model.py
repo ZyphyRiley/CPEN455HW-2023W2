@@ -2,7 +2,7 @@ import torch.nn as nn
 from layers import *
 
 class AbsolutePositionalEncoding(nn.Module):
-    MAX_LEN = 256
+    MAX_LEN = 512
     def __init__(self, d_model):
         super().__init__()
         self.W = nn.Parameter(torch.empty((self.MAX_LEN, d_model)))
@@ -20,7 +20,7 @@ class AbsolutePositionalEncoding(nn.Module):
         B, D = x.shape
         # 16, 4
 
-        print(B, D)
+        # print(B, D)
 
         # ChatGPT used to ask for efficient way to convert using B x N x D to B x D
         indices = torch.arange(B).unsqueeze(1)
@@ -29,7 +29,7 @@ class AbsolutePositionalEncoding(nn.Module):
         # Use indices to slice self.W for each row in x
         positional_encodings = self.W[indices]  # Shape: B x D
         # positional_encodings now holds [[self.W[0,:]], [self.W[1,:]], ..., [self.W[B-1,:]]]
-        print("positional_encodings: ", positional_encodings.shape)
+        # print("positional_encodings: ", positional_encodings.shape)
         positional_encodings = positional_encodings.squeeze()
         
         # Add positional encodings to input x
@@ -187,7 +187,7 @@ class PixelCNN(nn.Module):
         # print(label_embed.shape)
 
         label_embed = self.ape(encoding).to(device)
-        print(label_embed.shape)
+        # print(label_embed.shape)
 
         # B x D
         label_embed = torch.squeeze(label_embed)
@@ -196,7 +196,7 @@ class PixelCNN(nn.Module):
         # B x D x 1 x 1
         label_embed = torch.unsqueeze(label_embed, -1)
         label_embed = torch.unsqueeze(label_embed, -1)
-        print("label embed: ", label_embed.shape)
+        # print("label embed: ", label_embed.shape)
         
         # # B x H x W
         # label_embed = label_embed.unsqueeze(-1)
@@ -212,7 +212,7 @@ class PixelCNN(nn.Module):
         # other possibility, reshape to 1 * B * D * 1 * 1 then add
         # print("RESHAPE PASSED")
 
-        # x = x + label_embed
+        x = x + label_embed
 
         if self.init_padding is not sample:
             xs = [int(y) for y in x.size()]
@@ -228,8 +228,8 @@ class PixelCNN(nn.Module):
         ###      UP PASS    ###
         x = x if sample else torch.cat((x, self.init_padding), 1)
         # u_list  = [self.u_init(x) + posEnc]
-        u_list  = [self.u_init(x) + label_embed]
-        ul_list = [self.ul_init[0](x) + self.ul_init[1](x) + label_embed]
+        u_list  = [self.u_init(x)]
+        ul_list = [self.ul_init[0](x) + self.ul_init[1](x)]
 
         # print("x.shape: ", x.shape) # find the shape, 
         # print("u_list[0].shape: ", u_list[0].shape)
