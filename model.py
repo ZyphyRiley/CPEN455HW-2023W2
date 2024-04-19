@@ -211,7 +211,7 @@ class PixelCNN(nn.Module):
         ul_list = [self.ul_init[0](x) + self.ul_init[1](x)]
 
         # print("x.shape: ", x.shape) # find the shape, 
-        print("initial: ", u_list.shape)
+        print("initial:", u_list)
         # print("u_list[0].shape: ", u_list[0].shape)
         # print("ul_list[0].shape: ", ul_list[0].shape)
         # B, nr_filters, 32, 32
@@ -226,7 +226,7 @@ class PixelCNN(nn.Module):
                 u_list  += [self.downsize_u_stream[i](u_list[-1])]
                 ul_list += [self.downsize_ul_stream[i](ul_list[-1])]
 
-        print("after up pass:", u_list.shape)
+        print("up_pass: ",u_list)
         ###    DOWN PASS    ###
         u  = u_list.pop() + label_embed
         ul = ul_list.pop() + label_embed
