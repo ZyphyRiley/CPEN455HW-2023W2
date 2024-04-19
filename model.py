@@ -44,12 +44,12 @@ class PixelCNNLayer_up(nn.Module):
                                         resnet_nonlinearity, skip_connection=1)
                                             for _ in range(nr_resnet)])
 
-    def forward(self, u, ul, y):
+    def forward(self, u, ul):
         u_list, ul_list = [], []
 
         for i in range(self.nr_resnet):
-            u  = self.u_stream[i](u, y)
-            ul = self.ul_stream[i](ul, y, a=u)
+            u  = self.u_stream[i](u)
+            ul = self.ul_stream[i](ul, a=u)
             u_list  += [u]
             ul_list += [ul]
 
@@ -70,10 +70,10 @@ class PixelCNNLayer_down(nn.Module):
                                         resnet_nonlinearity, skip_connection=2)
                                             for _ in range(nr_resnet)])
 
-    def forward(self, u, ul, u_list, ul_list, y):
+    def forward(self, u, ul, u_list, ul_list):
         for i in range(self.nr_resnet):
-            u  = self.u_stream[i](u, y, a=u_list.pop())
-            ul = self.ul_stream[i](ul, y, a=torch.cat((u, ul_list.pop()), 1))
+            u  = self.u_stream[i](u, a=u_list.pop())
+            ul = self.ul_stream[i](ul, a=torch.cat((u, ul_list.pop()), 1))
 
         return u, ul
 
@@ -211,10 +211,10 @@ class PixelCNN(nn.Module):
         ul_list = [self.ul_init[0](x) + self.ul_init[1](x)]
 
         for i in range(0, len(u_list)):
-            u_list[i] = torch.cat(u_list[i], label_embed)
+            u_list[i] = torch.cat([u_list[i], label_embed], dim=1)
 
         for i in range(0, len(ul_list)):
-            ul_list[i] = torch.cat(ul_list[i], label_embed)
+            ul_list[i] = torch.cat([ul_list[i], label_embed], dim=1)
 
         # print("x.shape: ", x.shape) # find the shape, 
         # print("initial:", len(u_list))

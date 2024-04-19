@@ -131,7 +131,7 @@ class gated_resnet(nn.Module):
         # additions
         # self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=num_filters)
 
-    def forward(self, og_x, y, a=None):
+    def forward(self, og_x, a=None):
         x = self.conv_input(self.nonlinearity(og_x))
         if a is not None :
             x += self.nin_skip(self.nonlinearity(a))
