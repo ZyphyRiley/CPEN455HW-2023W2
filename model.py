@@ -44,11 +44,11 @@ class PixelCNNLayer_up(nn.Module):
                                         resnet_nonlinearity, skip_connection=1)
                                             for _ in range(nr_resnet)])
 
-    def forward(self, u, ul):
+    def forward(self, u, ul, embed):
         u_list, ul_list = [], []
 
         for i in range(self.nr_resnet):
-            u  = self.u_stream[i](u)
+            u  = self.u_stream[i](u, embed)
             ul = self.ul_stream[i](ul, a=u)
             u_list  += [u]
             ul_list += [ul]
@@ -217,7 +217,7 @@ class PixelCNN(nn.Module):
         # B, nr_filters, 32, 32
         for i in range(3):
             # resnet block
-            u_out, ul_out = self.up_layers[i](u_list[-1] + label_embed, ul_list[-1] + label_embed)
+            u_out, ul_out = self.up_layers[i](u_list[-1], ul_list[-1])
             u_list  += u_out
             ul_list += ul_out
 
