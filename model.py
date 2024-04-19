@@ -18,8 +18,11 @@ class AbsolutePositionalEncoding(nn.Module):
         """
         # add rows of matrix self.W[i, :] to position 1 <= i <= N
         B, D = x.shape
-        print(B, D)
-        out = x + self.W[:B, :]
+        
+        x_expanded = x.unsqueeze(1)
+        
+        out = x_expanded + self.W[:B, :]
+        out = out.squeeze(1)
         """
         END BLOCK
         """
@@ -176,7 +179,7 @@ class PixelCNN(nn.Module):
 
         # B x D
         label_embed = torch.squeeze(label_embed)
-        # print(label_embed)
+        print(label_embed.shape)
 
         # B x D x 1 x 1
         label_embed = torch.unsqueeze(label_embed, -1)
