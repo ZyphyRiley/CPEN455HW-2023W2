@@ -13,8 +13,6 @@ from pprint import pprint
 import argparse
 from pytorch_fid.fid_score import calculate_fid_given_paths
 
-global_label = ()
-
 def train_or_test(model, data_loader, optimizer, loss_op, device, args, epoch, mode = 'training'):
     if mode == 'training':
         model.train()
@@ -28,7 +26,6 @@ def train_or_test(model, data_loader, optimizer, loss_op, device, args, epoch, m
         model_input, label = item # modified to take label and pass it to the model
         model_input = model_input.to(device)
         model_output = model(model_input, label)
-        global_label = label
         loss = loss_op(model_input, model_output)
         loss_tracker.update(loss.item()/deno)
         if mode == 'training':
