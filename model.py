@@ -131,7 +131,7 @@ class PixelCNN(nn.Module):
         self.ape = AbsolutePositionalEncoding(40)
 
         # encode vocab size to model dimensions
-        self.enc_W = nn.Parameter(torch.empty((4, nr_filters)))
+        self.enc_W = nn.Parameter(torch.empty((4, 40)))
 
     def forward(self, x, labels, sample=False):
         # torch.Size([25, 3, 32, 32])
@@ -243,7 +243,7 @@ class PixelCNN(nn.Module):
                 ul = self.upsize_ul_stream[i](ul)
 
         x_out = self.nin_out(F.elu(ul))
-        print(x_out.shape)
+        # print(x_out.shape)
         x_out = x_out + label_embed
 
         assert len(u_list) == len(ul_list) == 0, pdb.set_trace()
