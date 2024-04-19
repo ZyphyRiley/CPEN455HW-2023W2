@@ -135,6 +135,7 @@ class PixelCNN(nn.Module):
         # print(x.shape)
         # print("THIS IS THE LABEL")
         # print(labels)
+        device = x.device
 
         encoding = torch.Tensor().to(device)
 
@@ -167,7 +168,7 @@ class PixelCNN(nn.Module):
         # Embedding layer with vocab_size 4 and dimension of 20
         # print("EMBED MODEL PASSED")
         encoding = encoding.type(torch.LongTensor)
-        label_embed = self.embedding(encoding)
+        label_embed = self.embedding(encoding).to(device)
         # print("EMBEDDING PASSED")
         # print(label_embed.shape)
 
