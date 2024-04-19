@@ -136,7 +136,7 @@ class PixelCNN(nn.Module):
         # print("THIS IS THE LABEL")
         # print(labels)
 
-        encoding = torch.Tensor()
+        encoding = torch.Tensor().to(device)
 
         # one hot version, use with learnable weight matrix
         # for label in labels:
