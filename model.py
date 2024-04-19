@@ -157,7 +157,7 @@ class PixelCNN(nn.Module):
             else:
                 indices.append(3)
 
-        y = torch.LongTensor(indices).to(device)
+        label_embed = torch.LongTensor(indices).to(device)
 
         # label_embed = self.embedding(y).to(device)
 
