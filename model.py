@@ -49,7 +49,7 @@ class PixelCNNLayer_up(nn.Module):
 
         for i in range(self.nr_resnet):
             u  = self.u_stream[i](u, embed)
-            ul = self.ul_stream[i](ul, a=u)
+            ul = self.ul_stream[i](ul, embed, a=u)
             u_list  += [u]
             ul_list += [ul]
 
@@ -70,10 +70,10 @@ class PixelCNNLayer_down(nn.Module):
                                         resnet_nonlinearity, skip_connection=2)
                                             for _ in range(nr_resnet)])
 
-    def forward(self, u, ul, u_list, ul_list):
+    def forward(self, u, ul, u_list, ul_list, embed):
         for i in range(self.nr_resnet):
-            u  = self.u_stream[i](u, a=u_list.pop())
-            ul = self.ul_stream[i](ul, a=torch.cat((u, ul_list.pop()), 1))
+            u  = self.u_stream[i](u, embed, a=u_list.pop())
+            ul = self.ul_stream[i](ul, embed, a=torch.cat((u, ul_list.pop()), 1))
 
         return u, ul
 
@@ -233,7 +233,7 @@ class PixelCNN(nn.Module):
 
         for i in range(3):
             # resnet block
-            u, ul = self.down_layers[i](u, ul, u_list, ul_list)
+            u, ul = self.down_layers[i](u, ul, u_list, ul_list, label_embed)
 
             # upscale (only twice)
             if i != 2 :
