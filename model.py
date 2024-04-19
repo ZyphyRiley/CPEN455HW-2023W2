@@ -191,7 +191,7 @@ class PixelCNN(nn.Module):
         ## APE SOLUTION ##
 
         label_embed = label_embed.unsqueeze(-1)
-        label_embed = label_embed.unsqueeze(-1).expand(B, -1, 32, 32).to(device)
+        label_embed = label_embed.unsqueeze(-1).to(device)
 
         if self.init_padding is not sample:
             xs = [int(y) for y in x.size()]
@@ -210,14 +210,11 @@ class PixelCNN(nn.Module):
         u_list  = [self.u_init(x)]
         ul_list = [self.ul_init[0](x) + self.ul_init[1](x)]
 
-
-
         for i in range(0, len(u_list)):
-            print("ulist and label shape: ", u_list[i].shape, label_embed.shape)
-            u_list[i] = torch.cat([u_list[i], label_embed], dim=1)
+            u_list[i] = u_list[i] + label_embed
 
         for i in range(0, len(ul_list)):
-            ul_list[i] = torch.cat([ul_list[i], label_embed], dim=1)
+            ul_list[i] = ul_list[i] + label_embed
 
         # print("x.shape: ", x.shape) # find the shape, 
         # print("initial:", len(u_list))
@@ -235,7 +232,7 @@ class PixelCNN(nn.Module):
                 u_list  += [self.downsize_u_stream[i](u_list[-1])]
                 ul_list += [self.downsize_ul_stream[i](ul_list[-1])]
 
-        # print("up_pass: ", len(u_list))
+        
         ###    DOWN PASS    ###
         u  = u_list.pop()
         ul = ul_list.pop()
