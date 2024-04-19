@@ -154,26 +154,26 @@ class PixelCNN(nn.Module):
         encoding = torch.Tensor().to(device)
 
         # one hot version, use with learnable weight matrix
-        for label in labels:
-            if label == "Class0":
-                encoding = torch.cat((encoding, torch.tensor([1, 0, 0, 0])), 0)
-            elif label == "Class1":
-                encoding = torch.cat((encoding, torch.tensor([0, 1, 0, 0])), 0)
-            elif label == "Class2":
-                encoding = torch.cat((encoding, torch.tensor([0, 0, 1, 0])), 0)
-            else:
-                encoding = torch.cat((encoding, torch.tensor([0, 0, 0, 1])), 0)
-
-        # numerical version, use with nn.Embedding
         # for label in labels:
         #     if label == "Class0":
-        #         encoding = torch.cat((encoding, torch.Tensor([0]).to(device)), 0)
+        #         encoding = torch.cat((encoding, torch.tensor([1, 0, 0, 0])), 0)
         #     elif label == "Class1":
-        #         encoding = torch.cat((encoding, torch.Tensor([1]).to(device)), 0)
+        #         encoding = torch.cat((encoding, torch.tensor([0, 1, 0, 0])), 0)
         #     elif label == "Class2":
-        #         encoding = torch.cat((encoding, torch.Tensor([2]).to(device)), 0)
+        #         encoding = torch.cat((encoding, torch.tensor([0, 0, 1, 0])), 0)
         #     else:
-        #         encoding = torch.cat((encoding, torch.Tensor([3]).to(device)), 0)
+        #         encoding = torch.cat((encoding, torch.tensor([0, 0, 0, 1])), 0)
+
+        # numerical version, use with nn.Embedding
+        for label in labels:
+            if label == "Class0":
+                encoding = torch.cat((encoding, torch.Tensor([0]).to(device)), 0)
+            elif label == "Class1":
+                encoding = torch.cat((encoding, torch.Tensor([1]).to(device)), 0)
+            elif label == "Class2":
+                encoding = torch.cat((encoding, torch.Tensor([2]).to(device)), 0)
+            else:
+                encoding = torch.cat((encoding, torch.Tensor([3]).to(device)), 0)
 
         # reshape to B x Vocab_size (B x 4)
         encoding = torch.reshape(encoding, (B, -1))
@@ -181,12 +181,12 @@ class PixelCNN(nn.Module):
 
         # Embedding layer with vocab_size 4 and dimension of 20
         # print("EMBED MODEL PASSED")
-        # encoding = (encoding.type(torch.LongTensor)).to(device)
-        # label_embed = self.embedding(encoding).to(device)
+        encoding = (encoding.type(torch.LongTensor)).to(device)
+        label_embed = self.embedding(encoding).to(device)
         # print("EMBEDDING PASSED")
         # print(label_embed.shape)
 
-        label_embed = self.ape(encoding).to(device)
+        #label_embed = self.ape(encoding).to(device)
         # print(label_embed.shape)
 
         # B x D
@@ -212,7 +212,7 @@ class PixelCNN(nn.Module):
         # other possibility, reshape to 1 * B * D * 1 * 1 then add
         # print("RESHAPE PASSED")
 
-        x = x + label_embed
+        # x = x + label_embed
 
         if self.init_padding is not sample:
             xs = [int(y) for y in x.size()]
@@ -228,8 +228,8 @@ class PixelCNN(nn.Module):
         ###      UP PASS    ###
         x = x if sample else torch.cat((x, self.init_padding), 1)
         # u_list  = [self.u_init(x) + posEnc]
-        u_list  = [self.u_init(x)]
-        ul_list = [self.ul_init[0](x) + self.ul_init[1](x)]
+        u_list  = [self.u_init(x) + label_embed]
+        ul_list = [self.ul_init[0](x) + self.ul_init[1](x) + label_embed]
 
         # print("x.shape: ", x.shape) # find the shape, 
         # print("u_list[0].shape: ", u_list[0].shape)
