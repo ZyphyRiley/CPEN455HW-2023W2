@@ -191,7 +191,10 @@ class PixelCNN(nn.Module):
                 
         out = torch.matmul(encoding, self.enc_W)
 
-        label_embed = self.ape(out).to(device)
+        label_embed = self.ape(out)
+
+        label_embed = label_embed.unsqueeze(-1)
+        label_embed = label_embed.unsqueeze(-1).to(device)
 
         ## APE SOLUTION ##
 
