@@ -27,7 +27,6 @@ def train_or_test(model, data_loader, optimizer, loss_op, device, args, epoch, m
     for batch_idx, item in enumerate(tqdm(data_loader)):
         model_input, label = item # modified to take label and pass it to the model
         model_input = model_input.to(device)
-        label = label.to(device)
         model_output = model(model_input, label)
         global_label = label
         loss = loss_op(model_input, model_output)
