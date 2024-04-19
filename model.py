@@ -122,7 +122,7 @@ class PixelCNN(nn.Module):
         self.nin_out = nin(nr_filters, num_mix * nr_logistic_mix)
         self.init_padding = None
 
-        self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=nr_filters)
+        self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=nr_filters).to(device)
         # self.W = 
 
     def forward(self, x, labels, sample=False):
