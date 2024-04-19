@@ -159,11 +159,9 @@ class PixelCNN(nn.Module):
         tensor_indices = torch.LongTensor(indices)
 
         label_embed = self.embedding(tensor_indices)
-        print(label_embed.shape)
 
         label_embed = label_embed.unsqueeze(-1)
         label_embed = label_embed.unsqueeze(-1)
-        print(label_embed.shape)
 
         if self.init_padding is not sample:
             xs = [int(y) for y in x.size()]
@@ -183,8 +181,9 @@ class PixelCNN(nn.Module):
         ul_list = [self.ul_init[0](x) + self.ul_init[1](x) + label_embed]
 
         # print("x.shape: ", x.shape) # find the shape, 
-        print("u_list[0].shape: ", u_list[0].shape)
+        # print("u_list[0].shape: ", u_list[0].shape)
         # print("ul_list[0].shape: ", ul_list[0].shape)
+        # B, nr_filters, 32, 32
         for i in range(3):
             # resnet block
             u_out, ul_out = self.up_layers[i](u_list[-1], ul_list[-1])
