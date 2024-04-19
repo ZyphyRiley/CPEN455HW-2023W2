@@ -18,6 +18,7 @@ class AbsolutePositionalEncoding(nn.Module):
         """
         # add rows of matrix self.W[i, :] to position 1 <= i <= N
         B, D = x.shape
+        print(B, D)
         out = x + self.W[:B, :]
         """
         END BLOCK
