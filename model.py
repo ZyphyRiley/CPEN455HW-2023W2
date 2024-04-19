@@ -210,7 +210,10 @@ class PixelCNN(nn.Module):
         u_list  = [self.u_init(x)]
         ul_list = [self.ul_init[0](x) + self.ul_init[1](x)]
 
+
+
         for i in range(0, len(u_list)):
+            print("ulist and label shape: ", u_list[i].shape, label_embed.shape)
             u_list[i] = torch.cat([u_list[i], label_embed], dim=1)
 
         for i in range(0, len(ul_list)):
