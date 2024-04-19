@@ -122,7 +122,7 @@ class PixelCNN(nn.Module):
         self.nin_out = nin(nr_filters, num_mix * nr_logistic_mix)
         self.init_padding = None
 
-        self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=nr_filters).to(device)
+        self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=nr_filters)
         # self.W = 
 
     def forward(self, x, labels, sample=False):
@@ -167,7 +167,7 @@ class PixelCNN(nn.Module):
 
         # Embedding layer with vocab_size 4 and dimension of 20
         # print("EMBED MODEL PASSED")
-        encoding = encoding.type(torch.LongTensor)
+        encoding = (encoding.type(torch.LongTensor)).to(device)
         label_embed = self.embedding(encoding).to(device)
         # print("EMBEDDING PASSED")
         # print(label_embed.shape)
