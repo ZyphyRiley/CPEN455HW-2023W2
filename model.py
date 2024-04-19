@@ -226,7 +226,7 @@ class PixelCNN(nn.Module):
         # B, nr_filters, 32, 32
         for i in range(3):
             # resnet block
-            u_out, ul_out = self.up_layers[i](u_list[-1], ul_list[-1], y)
+            u_out, ul_out = self.up_layers[i](u_list[-1], ul_list[-1])
             u_list  += u_out
             ul_list += ul_out
 
@@ -242,7 +242,7 @@ class PixelCNN(nn.Module):
 
         for i in range(3):
             # resnet block
-            u, ul = self.down_layers[i](u, ul, u_list, ul_list, y)
+            u, ul = self.down_layers[i](u, ul, u_list, ul_list)
 
             # upscale (only twice)
             if i != 2 :
