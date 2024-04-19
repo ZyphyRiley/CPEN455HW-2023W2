@@ -161,6 +161,10 @@ class PixelCNN(nn.Module):
         label_embed = self.embedding(tensor_indices)
         print(label_embed.shape)
 
+        label_embed = label_embed.unsqueeze(-1)
+        label_embed = label_embed.unsqueeze(-1)
+        print(label_embed.shape)
+
         if self.init_padding is not sample:
             xs = [int(y) for y in x.size()]
             padding = Variable(torch.ones(xs[0], 1, xs[2], xs[3]), requires_grad=False)
