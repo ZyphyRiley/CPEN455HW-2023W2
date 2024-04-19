@@ -209,9 +209,6 @@ class PixelCNN(nn.Module):
         # u_list  = [self.u_init(x) + posEnc]
         u_list  = [self.u_init(x)]
         ul_list = [self.ul_init[0](x) + self.ul_init[1](x)]
-        
-        # u_list[0] = u_list[0] + label_embed
-        # ul_list[0] = ul_list[0] + label_embed
 
         # print("x.shape: ", x.shape) # find the shape, 
         # print("u_list[0].shape: ", u_list[0].shape)
@@ -220,8 +217,8 @@ class PixelCNN(nn.Module):
         for i in range(3):
             # resnet block
             u_out, ul_out = self.up_layers[i](u_list[-1], ul_list[-1])
-            u_list  += u_out
-            ul_list += ul_out
+            u_list  += u_out + label_embed
+            ul_list += ul_out + label_embed
 
             if i != 2:
                 # downscale (only twice)
