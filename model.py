@@ -18,9 +18,9 @@ class AbsolutePositionalEncoding(nn.Module):
         """
         # add rows of matrix self.W[i, :] to position 1 <= i <= N
         B, D = x.shape
-        # 16, 4
+        # 16, 20
 
-        # print(B, D)
+        print("B, D:", B, D)
 
         # ChatGPT used to ask for efficient way to convert using B x N x D to B x D
         indices = torch.arange(B).unsqueeze(1)
@@ -138,7 +138,8 @@ class PixelCNN(nn.Module):
         self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=nr_filters)
 
         # absolute positional encoding
-        self.ape = AbsolutePositionalEncoding(4)
+        self.ape = AbsolutePositionalEncoding(nr_filters)
+        self.enc_W = nn.Parameter(torch.empty((4, nr_filters)))
 
     def forward(self, x, labels, sample=False):
         # torch.Size([25, 3, 32, 32])
@@ -146,25 +147,53 @@ class PixelCNN(nn.Module):
         B, D, H, W = x.shape
         device = x.device
 
-        indices = []
+        ## NN EMBEDDING SOLUTION ##
 
-        # change all labels into indices
+        # indices = []
+
+        # # change all labels into indices
+        # for label in labels:
+        #     if label == "Class0":
+        #         indices.append(0)
+        #     elif label == "Class1":
+        #         indices.append(1)
+        #     elif label == "Class2":
+        #         indices.append(2)
+        #     else:
+        #         indices.append(3)
+
+        # tensor_indices = torch.LongTensor(indices).to(device)
+
+        # label_embed = self.embedding(tensor_indices).to(device)
+
+
+        # label_embed = label_embed.unsqueeze(-1)
+        # label_embed = label_embed.unsqueeze(-1).to(device)
+
+        ## NN EMBEDDING SOLUTION ##
+
+        ## APE SOLUTION ##
+
+        encoding = torch.Tensor().to(device)
+
         for label in labels:
             if label == "Class0":
-                indices.append(0)
+                encoding = torch.cat((encoding, torch.tensor([1, 0, 0, 0])), 0)
             elif label == "Class1":
-                indices.append(1)
+                encoding = torch.cat((encoding, torch.tensor([0, 1, 0, 0])), 0)
             elif label == "Class2":
-                indices.append(2)
+                encoding = torch.cat((encoding, torch.tensor([0, 0, 1, 0])), 0)
             else:
-                indices.append(3)
+                encoding = torch.cat((encoding, torch.tensor([0, 0, 0, 1])), 0)
+        #
+                
+        encoding = torch.reshape(encoding, (B, -1))
+                
+        out = torch.matmul(encoding, self.enc_W)
 
-        tensor_indices = torch.LongTensor(indices).to(device)
+        label_embed = self.ape(out)
 
-        label_embed = self.embedding(tensor_indices).to(device)
-
-        label_embed = label_embed.unsqueeze(-1)
-        label_embed = label_embed.unsqueeze(-1).to(device)
+        ## APE SOLUTION ##
 
         if self.init_padding is not sample:
             xs = [int(y) for y in x.size()]
