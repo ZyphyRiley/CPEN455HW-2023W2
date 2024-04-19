@@ -127,10 +127,10 @@ class PixelCNN(nn.Module):
         # self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=nr_filters)
 
         # absolute positional encoding
-        self.ape = AbsolutePositionalEncoding(30)
+        self.ape = AbsolutePositionalEncoding(nr_filters)
 
         # encode vocab size to model dimensions
-        self.enc_W = nn.Parameter(torch.empty((4, 30)))
+        self.enc_W = nn.Parameter(torch.empty((4, nr_filters)))
 
     def forward(self, x, labels, sample=False):
         # torch.Size([25, 3, 32, 32])
@@ -217,8 +217,8 @@ class PixelCNN(nn.Module):
         for i in range(3):
             # resnet block
             u_out, ul_out = self.up_layers[i](u_list[-1], ul_list[-1])
-            u_list  += u_out + label_embed
-            ul_list += ul_out + label_embed
+            u_list  += u_out
+            ul_list += ul_out
 
             if i != 2:
                 # downscale (only twice)
@@ -226,8 +226,8 @@ class PixelCNN(nn.Module):
                 ul_list += [self.downsize_ul_stream[i](ul_list[-1])]
 
         ###    DOWN PASS    ###
-        u  = u_list.pop()
-        ul = ul_list.pop()
+        u  = u_list.pop() + label_embed
+        ul = ul_list.pop() + label_embed
 
         for i in range(3):
             # resnet block
@@ -239,8 +239,6 @@ class PixelCNN(nn.Module):
                 ul = self.upsize_ul_stream[i](ul)
 
         x_out = self.nin_out(F.elu(ul))
-        # print(x_out.shape)
-        x_out = x_out + label_embed
 
         assert len(u_list) == len(ul_list) == 0, pdb.set_trace()
 
