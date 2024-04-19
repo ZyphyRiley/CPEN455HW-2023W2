@@ -211,13 +211,13 @@ class PixelCNN(nn.Module):
         ul_list = [self.ul_init[0](x) + self.ul_init[1](x)]
 
         # print("x.shape: ", x.shape) # find the shape, 
-        print("initial:", len(u_list))
+        # print("initial:", len(u_list))
         # print("u_list[0].shape: ", u_list[0].shape)
         # print("ul_list[0].shape: ", ul_list[0].shape)
         # B, nr_filters, 32, 32
         for i in range(3):
             # resnet block
-            u_out, ul_out = self.up_layers[i](u_list[-1], ul_list[-1])
+            u_out, ul_out = self.up_layers[i](u_list[-1] + label_embed, ul_list[-1] + label_embed)
             u_list  += u_out
             ul_list += ul_out
 
@@ -226,10 +226,10 @@ class PixelCNN(nn.Module):
                 u_list  += [self.downsize_u_stream[i](u_list[-1])]
                 ul_list += [self.downsize_ul_stream[i](ul_list[-1])]
 
-        print("up_pass: ", len(u_list))
+        # print("up_pass: ", len(u_list))
         ###    DOWN PASS    ###
-        u  = u_list.pop() + label_embed
-        ul = ul_list.pop() + label_embed
+        u  = u_list.pop()
+        ul = ul_list.pop()
 
         for i in range(3):
             # resnet block
