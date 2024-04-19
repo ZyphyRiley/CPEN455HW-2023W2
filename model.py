@@ -140,8 +140,8 @@ class PixelCNN(nn.Module):
         device = x.device
 
         # weight checks
-        print("enc_W:", self.enc_W)
-        print("ape_w:", self.ape.W)
+        # print("enc_W:", self.enc_W)
+        # print("ape_w:", self.ape.W)
 
         ## NN EMBEDDING SOLUTION ##
 
