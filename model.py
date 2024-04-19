@@ -177,7 +177,7 @@ class PixelCNN(nn.Module):
 
         label_embed = torch.unsqueeze(label_embed, -1)
         label_embed = torch.unsqueeze(label_embed, -1)
-        print("label embed: " + label_embed.shape)
+        print("label embed: ", label_embed.shape)
         
         # # B x H x W
         # label_embed = label_embed.unsqueeze(-1)
@@ -212,9 +212,9 @@ class PixelCNN(nn.Module):
         u_list  = [self.u_init(x)]
         ul_list = [self.ul_init[0](x) + self.ul_init[1](x)]
 
-        print("x.shape: " + x.shape) # find the shape, 
-        print("u_list[0].shape: " + u_list[0].shape)
-        print("ul_list[0].shape: " + ul_list[0].shape)
+        print("x.shape: ", x.shape) # find the shape, 
+        print("u_list[0].shape: ", u_list[0].shape)
+        print("ul_list[0].shape: ", ul_list[0].shape)
         for i in range(3):
             # resnet block
             u_out, ul_out = self.up_layers[i](u_list[-1], ul_list[-1])
