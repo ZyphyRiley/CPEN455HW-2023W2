@@ -65,7 +65,9 @@ if __name__ == '__main__':
     #You should replace the random classifier with your trained model
     #Begin of your code
     model = random_classifier(NUM_CLASSES)
-    # model = PixelCNN() fill this in
+    # model = PixelCNN(nr_resnet=args.nr_resnet, nr_filters=args.nr_filters, 
+    #            input_channels=input_channels, nr_logistic_mix=args.nr_logistic_mix)
+    #model = model.to(device)
     #End of your code
     
     model = model.to(device)

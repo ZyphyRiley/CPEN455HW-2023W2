@@ -211,6 +211,7 @@ class PixelCNN(nn.Module):
         ul_list = [self.ul_init[0](x) + self.ul_init[1](x)]
 
         # print("x.shape: ", x.shape) # find the shape, 
+        print(u_list)
         # print("u_list[0].shape: ", u_list[0].shape)
         # print("ul_list[0].shape: ", ul_list[0].shape)
         # B, nr_filters, 32, 32
