@@ -128,14 +128,25 @@ class gated_resnet(nn.Module):
         self.dropout = nn.Dropout2d(0.5)
         self.conv_out = conv_op(2 * num_filters, 2 * num_filters)
 
+        # additions
+        self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=num_filters)
 
-    def forward(self, og_x, embed, a=None):
+    def forward(self, og_x, y, a=None):
         x = self.conv_input(self.nonlinearity(og_x))
+        y = torch.unsqueeze(torch.unsqueeze(self.embedding(y), -1), -1)
+
+        # x = x + y
         if a is not None :
             x += self.nin_skip(self.nonlinearity(a))
         x = self.nonlinearity(x)
         x = self.dropout(x)
         x = self.conv_out(x)
         a, b = torch.chunk(x, 2, dim=1)
-        c3 = a * F.sigmoid(b + embed)
+        c, d = torch.chunk(y, 2, dim=1)
+
+        f = torch.tanh(a + c)
+        g = torch.sigmoid(b + d)
+
+        # c3 = a * F.sigmoid(b)
+        c3 = f * g
         return og_x + c3

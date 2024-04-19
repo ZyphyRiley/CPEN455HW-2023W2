@@ -44,12 +44,12 @@ class PixelCNNLayer_up(nn.Module):
                                         resnet_nonlinearity, skip_connection=1)
                                             for _ in range(nr_resnet)])
 
-    def forward(self, u, ul, embed):
+    def forward(self, u, ul, y):
         u_list, ul_list = [], []
 
         for i in range(self.nr_resnet):
-            u  = self.u_stream[i](u, embed)
-            ul = self.ul_stream[i](ul, embed, a=u)
+            u  = self.u_stream[i](u, y)
+            ul = self.ul_stream[i](ul, y, a=u)
             u_list  += [u]
             ul_list += [ul]
 
@@ -70,10 +70,10 @@ class PixelCNNLayer_down(nn.Module):
                                         resnet_nonlinearity, skip_connection=2)
                                             for _ in range(nr_resnet)])
 
-    def forward(self, u, ul, u_list, ul_list, embed):
+    def forward(self, u, ul, u_list, ul_list, y):
         for i in range(self.nr_resnet):
-            u  = self.u_stream[i](u, embed, a=u_list.pop())
-            ul = self.ul_stream[i](ul, embed, a=torch.cat((u, ul_list.pop()), 1))
+            u  = self.u_stream[i](u, y, a=u_list.pop())
+            ul = self.ul_stream[i](ul, y, a=torch.cat((u, ul_list.pop()), 1))
 
         return u, ul
 
@@ -126,11 +126,11 @@ class PixelCNN(nn.Module):
 
         # self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=nr_filters)
 
-        # absolute positional encoding
-        self.ape = AbsolutePositionalEncoding(nr_filters)
+        # # absolute positional encoding
+        # self.ape = AbsolutePositionalEncoding(nr_filters)
 
-        # encode vocab size to model dimensions
-        self.enc_W = nn.Parameter(torch.empty((4, nr_filters)))
+        # # encode vocab size to model dimensions
+        # self.enc_W = nn.Parameter(torch.empty((4, nr_filters)))
 
     def forward(self, x, labels, sample=False):
         # torch.Size([25, 3, 32, 32])
@@ -144,52 +144,52 @@ class PixelCNN(nn.Module):
 
         ## NN EMBEDDING SOLUTION ##
 
-        # indices = []
+        indices = []
 
-        # # change all labels into indices
-        # for label in labels:
-        #     if label == "Class0":
-        #         indices.append(0)
-        #     elif label == "Class1":
-        #         indices.append(1)
-        #     elif label == "Class2":
-        #         indices.append(2)
-        #     else:
-        #         indices.append(3)
+        # change all labels into indices
+        for label in labels:
+            if label == "Class0":
+                indices.append(0)
+            elif label == "Class1":
+                indices.append(1)
+            elif label == "Class2":
+                indices.append(2)
+            else:
+                indices.append(3)
 
-        # tensor_indices = torch.LongTensor(indices).to(device)
+        y = torch.LongTensor(indices).to(device)
 
-        # label_embed = self.embedding(tensor_indices).to(device)
+        # label_embed = self.embedding(y).to(device)
 
 
         # label_embed = label_embed.unsqueeze(-1)
         # label_embed = label_embed.unsqueeze(-1).to(device)
 
-        ## NN EMBEDDING SOLUTION ##
+        # NN EMBEDDING SOLUTION ##
 
-        ## APE SOLUTION ##
+        # APE SOLUTION ##
 
-        encoding = torch.Tensor().to(device)
+        # encoding = torch.Tensor().to(device)
 
-        for label in labels:
-            if label == "Class0":
-                encoding = torch.cat((encoding, torch.tensor([1, 0, 0, 0]).to(device)), 0)
-            elif label == "Class1":
-                encoding = torch.cat((encoding, torch.tensor([0, 1, 0, 0]).to(device)), 0)
-            elif label == "Class2":
-                encoding = torch.cat((encoding, torch.tensor([0, 0, 1, 0]).to(device)), 0)
-            else:
-                encoding = torch.cat((encoding, torch.tensor([0, 0, 0, 1]).to(device)), 0)
-        #
+        # for label in labels:
+        #     if label == "Class0":
+        #         encoding = torch.cat((encoding, torch.tensor([1, 0, 0, 0]).to(device)), 0)
+        #     elif label == "Class1":
+        #         encoding = torch.cat((encoding, torch.tensor([0, 1, 0, 0]).to(device)), 0)
+        #     elif label == "Class2":
+        #         encoding = torch.cat((encoding, torch.tensor([0, 0, 1, 0]).to(device)), 0)
+        #     else:
+        #         encoding = torch.cat((encoding, torch.tensor([0, 0, 0, 1]).to(device)), 0)
+        # #
                 
-        encoding = torch.reshape(encoding, (B, -1))
+        # encoding = torch.reshape(encoding, (B, -1))
                 
-        out = torch.matmul(encoding, self.enc_W)
+        # out = torch.matmul(encoding, self.enc_W)
 
-        label_embed = self.ape(out)
+        # label_embed = self.ape(out)
 
-        label_embed = label_embed.unsqueeze(-1)
-        label_embed = label_embed.unsqueeze(-1).to(device)
+        # label_embed = label_embed.unsqueeze(-1)
+        # label_embed = label_embed.unsqueeze(-1).to(device)
 
         ## APE SOLUTION ##
 
@@ -217,7 +217,7 @@ class PixelCNN(nn.Module):
         # B, nr_filters, 32, 32
         for i in range(3):
             # resnet block
-            u_out, ul_out = self.up_layers[i](u_list[-1], ul_list[-1], label_embed)
+            u_out, ul_out = self.up_layers[i](u_list[-1], ul_list[-1], y)
             u_list  += u_out
             ul_list += ul_out
 
@@ -233,7 +233,7 @@ class PixelCNN(nn.Module):
 
         for i in range(3):
             # resnet block
-            u, ul = self.down_layers[i](u, ul, u_list, ul_list, label_embed)
+            u, ul = self.down_layers[i](u, ul, u_list, ul_list, y)
 
             # upscale (only twice)
             if i != 2 :
