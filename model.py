@@ -18,11 +18,17 @@ class AbsolutePositionalEncoding(nn.Module):
         """
         # add rows of matrix self.W[i, :] to position 1 <= i <= N
         B, D = x.shape
+
+        # ChatGPT used to ask for efficient way to convert using B x N x D to B x D
+        indices = torch.arange(B).unsqueeze(1)
+        # indices now holds [[0], [1], [2], ..., [B-1]]
         
-        x_expanded = x.unsqueeze(1)
+        # Use indices to slice self.W for each row in x
+        positional_encodings = self.W[indices]  # Shape: B x D
+        # positional_encodings now holds [[self.W[0,:]], [self.W[1,:]], ..., [self.W[B-1,:]]]
         
-        out = x_expanded + self.W[:B, :]
-        out = out.squeeze(1)
+        # Add positional encodings to input x
+        out = x + positional_encodings
         """
         END BLOCK
         """
@@ -179,7 +185,7 @@ class PixelCNN(nn.Module):
 
         # B x D
         label_embed = torch.squeeze(label_embed)
-        print(label_embed.shape)
+        # print(label_embed)
 
         # B x D x 1 x 1
         label_embed = torch.unsqueeze(label_embed, -1)
