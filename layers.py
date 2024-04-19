@@ -138,4 +138,4 @@ class gated_resnet(nn.Module):
         x = self.conv_out(x)
         a, b = torch.chunk(x, 2, dim=1)
         c3 = a * F.sigmoid(b + embed)
-        return og_x + c3
+        return og_x + embed + c3
