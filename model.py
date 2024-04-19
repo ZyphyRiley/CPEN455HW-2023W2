@@ -20,20 +20,10 @@ class AbsolutePositionalEncoding(nn.Module):
         B, D = x.shape
         # 16, 20
 
-        #print("B, D:", B, D)
+        out = torch.zeros(B, D)
 
-        # ChatGPT used to ask for efficient way to convert using B x N x D to B x D
-        indices = torch.arange(B).unsqueeze(1)
-        # indices now holds [[0], [1], [2], ..., [B-1]]
-        
-        # Use indices to slice self.W for each row in x
-        positional_encodings = self.W[indices]  # Shape: B x D
-        # positional_encodings now holds [[self.W[0,:]], [self.W[1,:]], ..., [self.W[B-1,:]]]
-        # print("positional_encodings: ", positional_encodings.shape)
-        positional_encodings = positional_encodings.squeeze()
-        #print("positional_encodings: ", positional_encodings.shape)
-        # Add positional encodings to input x
-        out = x + positional_encodings
+        for i in range(0, B):
+            out[i, :] = x[i, :] + self.W[i, :]
         """
         END BLOCK
         """
@@ -148,6 +138,10 @@ class PixelCNN(nn.Module):
         # B = 16, D = 3, H/W = 32
         B, D, H, W = x.shape
         device = x.device
+
+        # weight checks
+        print("enc_W:", self.enc_W)
+        print("ape_w:", self.ape.W)
 
         ## NN EMBEDDING SOLUTION ##
 
