@@ -136,6 +136,7 @@ class gated_resnet(nn.Module):
         print("og:", x.shape)
         y = torch.unsqueeze(torch.unsqueeze(self.embedding(y), -1), -1).expand(-1, -1, x.shape[2], x.shape[3]) # expand to B, D, H, W
 
+        print("y:", y.shape)
         x = torch.cat([x, y], dim=1)
         print("cat:", x.shape)
 
