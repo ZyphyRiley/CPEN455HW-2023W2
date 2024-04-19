@@ -137,7 +137,7 @@ class PixelCNN(nn.Module):
         self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=nr_filters)
 
         # absolute positional encoding
-        self.ape = AbsolutePositionalEncoding(4)
+        self.ape = AbsolutePositionalEncoding(nr_filters)
 
     def forward(self, x, labels, sample=False):
         # similar as done in the tf repo :
