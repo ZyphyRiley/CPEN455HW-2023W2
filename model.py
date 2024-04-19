@@ -124,7 +124,7 @@ class PixelCNN(nn.Module):
         self.nin_out = nin(nr_filters, num_mix * nr_logistic_mix)
         self.init_padding = None
 
-        # self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=nr_filters)
+        self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=nr_filters)
 
         # # absolute positional encoding
         # self.ape = AbsolutePositionalEncoding(nr_filters)
@@ -188,10 +188,10 @@ class PixelCNN(nn.Module):
 
         # label_embed = self.ape(out)
 
-        # label_embed = label_embed.unsqueeze(-1)
-        # label_embed = label_embed.unsqueeze(-1).to(device)
-
         ## APE SOLUTION ##
+
+        label_embed = label_embed.unsqueeze(-1)
+        label_embed = label_embed.unsqueeze(-1).to(device)
 
         if self.init_padding is not sample:
             xs = [int(y) for y in x.size()]
@@ -209,6 +209,12 @@ class PixelCNN(nn.Module):
         # u_list  = [self.u_init(x) + posEnc]
         u_list  = [self.u_init(x)]
         ul_list = [self.ul_init[0](x) + self.ul_init[1](x)]
+
+        for i in range(0, len(u_list)):
+            u_list[i] = torch.cat(u_list[i], label_embed)
+
+        for i in range(0, len(ul_list)):
+            ul_list[i] = torch.cat(ul_list[i], label_embed)
 
         # print("x.shape: ", x.shape) # find the shape, 
         # print("initial:", len(u_list))

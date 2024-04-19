@@ -129,17 +129,10 @@ class gated_resnet(nn.Module):
         self.conv_out = conv_op(2 * num_filters, 2 * num_filters)
 
         # additions
-        self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=num_filters)
+        # self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=num_filters)
 
     def forward(self, og_x, y, a=None):
         x = self.conv_input(self.nonlinearity(og_x))
-        print("og:", x.shape)
-        y = torch.unsqueeze(torch.unsqueeze(self.embedding(y), -1), -1).expand(-1, -1, x.shape[2], x.shape[3]) # expand to B, D, H, W
-
-        print("y:", y.shape)
-        x = torch.cat([x, y], dim=1)
-        print("cat:", x.shape)
-
         if a is not None :
             x += self.nin_skip(self.nonlinearity(a))
         x = self.nonlinearity(x)
