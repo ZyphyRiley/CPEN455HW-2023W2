@@ -28,6 +28,8 @@ def train_or_test(model, data_loader, optimizer, loss_op, device, args, epoch, m
         model_output = model(model_input, label)
         loss = loss_op(model_input, model_output)
         print("loss: ", loss)
+        print("loss: ", loss.item())
+        print("deno: ", deno)
         loss_tracker.update(loss.item()/deno)
         if mode == 'training':
             optimizer.zero_grad()
