@@ -124,7 +124,11 @@ class PixelCNN(nn.Module):
         self.nin_out = nin(nr_filters, num_mix * nr_logistic_mix)
         self.init_padding = None
 
-        self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=(nr_filters + 10) * 32 * 32)
+        self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=input_channels * 32 * 32)
+
+        self.ape = AbsolutePositionalEncoding(input_channels * 32 * 32)
+
+        self.enc_W = nn.Parameter(torch.empty(4, input_channels * 32 * 32))
 
     def forward(self, x, labels, sample=False):
         # torch.Size([25, 3, 32, 32])
@@ -132,26 +136,45 @@ class PixelCNN(nn.Module):
         B, D, H, W = x.shape
         device = x.device
 
-        indices = []
+        # indices = []
 
-        # change all labels into indices
+        # # change all labels into indices
+        # for label in labels:
+        #     if label == "Class0":
+        #         indices.append(0)
+        #     elif label == "Class1":
+        #         indices.append(1)
+        #     elif label == "Class2":
+        #         indices.append(2)
+        #     else:
+        #         indices.append(3)
+
+        # label_embed = torch.LongTensor(indices).to(device)
+
+        # label_embed = self.embedding(label_embed).to(device)
+
+        encoding = torch.Tensor().to(device)
+
         for label in labels:
             if label == "Class0":
-                indices.append(0)
+                encoding = torch.cat((encoding, torch.tensor([1, 0, 0, 0]).to(device)), 0)
             elif label == "Class1":
-                indices.append(1)
+                encoding = torch.cat((encoding, torch.tensor([0, 1, 0, 0]).to(device)), 0)
             elif label == "Class2":
-                indices.append(2)
+                encoding = torch.cat((encoding, torch.tensor([0, 0, 1, 0]).to(device)), 0)
             else:
-                indices.append(3)
+                encoding = torch.cat((encoding, torch.tensor([0, 0, 0, 1]).to(device)), 0)
+        #
+                
+        encoding = torch.reshape(encoding, (B, -1))
+                
+        out = torch.matmul(encoding, self.enc_W)
 
-        label_embed = torch.LongTensor(indices).to(device)
-
-        label_embed = self.embedding(label_embed).to(device)
+        label_embed = self.ape(out)
         
-        label_embed = label_embed.reshape(B, (self.nr_filters + 10), H, W)
+        label_embed = label_embed.reshape(B, D, H, W)
 
-        # x = x + label_embed
+        x = x + label_embed
 
         if self.init_padding is not sample:
             xs = [int(y) for y in x.size()]
@@ -166,7 +189,7 @@ class PixelCNN(nn.Module):
 
         ###      UP PASS    ###
         x = x if sample else torch.cat((x, self.init_padding), 1)
-        u_list  = [self.u_init(x)]
+        u_list  = [self.u_init(x) + ]
         ul_list = [self.ul_init[0](x) + self.ul_init[1](x)]
 
         for i in range(3):
@@ -179,12 +202,6 @@ class PixelCNN(nn.Module):
                 # downscale (only twice)
                 u_list  += [self.downsize_u_stream[i](u_list[-1])]
                 ul_list += [self.downsize_ul_stream[i](ul_list[-1])]
-
-        # for i in range(0, len(u_list)):
-        #     u_list[i] = u_list[i] + label_embed
-
-        # for i in range(0, len(ul_list)):
-        #     ul_list[i] = ul_list[i] + label_embed
 
         ###    DOWN PASS    ###
         u  = u_list.pop()
@@ -200,8 +217,6 @@ class PixelCNN(nn.Module):
                 ul = self.upsize_ul_stream[i](ul)
 
         x_out = self.nin_out(F.elu(ul))
-        # 16, 30, 32, 32
-        x_out = x_out + label_embed
 
         assert len(u_list) == len(ul_list) == 0, pdb.set_trace()
 
