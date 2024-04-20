@@ -149,7 +149,7 @@ class PixelCNN(nn.Module):
 
         label_embed = self.embedding(label_embed).to(device)
         
-        label_embed = label_embed.reshape(B, D, H, W)
+        label_embed = label_embed.reshape(B, (self.nr_filters + 10), H, W)
 
         # x = x + label_embed
 
