@@ -30,13 +30,6 @@ def train_or_test(model, data_loader, optimizer, loss_op, device, args, epoch, m
 
         B = model_input.shape[0]
 
-        if mode == 'val':
-            print('val')
-            print(label)
-        elif mode == 'train':
-            print('train')
-            print(label)
-
         if mode == 'test':
             y_pred, y_losses = model.classify(model_input, len(my_bidict))
             loss_tracker.update(torch.sum(y_losses).item()/deno)
@@ -54,7 +47,7 @@ def train_or_test(model, data_loader, optimizer, loss_op, device, args, epoch, m
                 original_label = torch.tensor(original_label, dtype=torch.int64).to(device)
                 print(original_label, "val")
                 y_pred = model.classify(model_input, len(my_bidict))
-                val_acc.update(torch.sum(y_pred == original_label), B)
+                val_acc.update(torch.sum(y_pred == original_label).item(), B)
         
     if args.en_wandb:
         wandb.log({mode + "-Average-BPD" : loss_tracker.get_mean()})
