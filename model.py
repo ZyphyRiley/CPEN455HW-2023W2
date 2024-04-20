@@ -172,7 +172,7 @@ class PixelCNN(nn.Module):
 
         label_embed = self.ape(out)
         
-        label_embed = label_embed.reshape(B, D, H, W)
+        label_embed = label_embed.reshape(B, D, H, W).to(device)
 
         x = x + label_embed
 
