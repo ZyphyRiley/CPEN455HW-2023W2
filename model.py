@@ -155,7 +155,7 @@ class PixelCNN(nn.Module):
 
         # NN EMBEDDING SOLUTION ##
 
-        x = x + label_embed
+        # x = x + label_embed
 
         if self.init_padding is not sample:
             xs = [int(y) for y in x.size()]
@@ -179,20 +179,21 @@ class PixelCNN(nn.Module):
             u_list  += u_out
             ul_list += ul_out
 
+            for j in range(0, len(u_list)):
+                u_list[j] = u_list[j] + label_embed
+
+            for j in range(0, len(ul_list)):
+                ul_list[j] = ul_list[j] + label_embed
+
+
             if i != 2:
                 # downscale (only twice)
                 u_list  += [self.downsize_u_stream[i](u_list[-1])]
                 ul_list += [self.downsize_ul_stream[i](ul_list[-1])]
 
-        # for i in range(0, len(u_list)):
-        #     u_list[i] = u_list[i] + label_embed
-
-        # for i in range(0, len(ul_list)):
-        #     ul_list[i] = ul_list[i] + label_embed
-
         ###    DOWN PASS    ###
-        u  = u_list.pop()
-        ul = ul_list.pop()
+        u  = u_list.pop() + label_embed
+        ul = ul_list.pop() + label_embed
 
         for i in range(3):
             # resnet block
