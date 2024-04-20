@@ -124,11 +124,7 @@ class PixelCNN(nn.Module):
         self.nin_out = nin(nr_filters, num_mix * nr_logistic_mix)
         self.init_padding = None
 
-        self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=input_channels * 32 * 32)
-
-        self.ape = AbsolutePositionalEncoding(nr_filters * 32 * 32)
-
-        self.enc_W = nn.Parameter(torch.empty(4, nr_filters * 32 * 32))
+        self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=nr_filters * 32 * 32)
 
     def forward(self, x, labels, sample=False):
         # torch.Size([25, 3, 32, 32])
@@ -136,43 +132,22 @@ class PixelCNN(nn.Module):
         B, D, H, W = x.shape
         device = x.device
 
-        # indices = []
+        indices = []
 
-        # # change all labels into indices
-        # for label in labels:
-        #     if label == "Class0":
-        #         indices.append(0)
-        #     elif label == "Class1":
-        #         indices.append(1)
-        #     elif label == "Class2":
-        #         indices.append(2)
-        #     else:
-        #         indices.append(3)
-
-        # label_embed = torch.LongTensor(indices).to(device)
-
-        # label_embed = self.embedding(label_embed).to(device)
-
-        encoding = torch.Tensor().to(device)
-
+        # change all labels into indices
         for label in labels:
             if label == "Class0":
-                encoding = torch.cat((encoding, torch.tensor([1, 0, 0, 0]).to(device)), 0)
+                indices.append(0)
             elif label == "Class1":
-                encoding = torch.cat((encoding, torch.tensor([0, 1, 0, 0]).to(device)), 0)
+                indices.append(1)
             elif label == "Class2":
-                encoding = torch.cat((encoding, torch.tensor([0, 0, 1, 0]).to(device)), 0)
+                indices.append(2)
             else:
-                encoding = torch.cat((encoding, torch.tensor([0, 0, 0, 1]).to(device)), 0)
-        #
-                
-        encoding = torch.reshape(encoding, (B, -1))
-                
-        out = torch.matmul(encoding, self.enc_W)
+                indices.append(3)
 
-        label_embed = self.ape(out)
-        
-        label_embed = label_embed.reshape(B, self.nr_filters, H, W).to(device)
+        label_embed = torch.LongTensor(indices).to(device)
+
+        label_embed = self.embedding(label_embed).to(device)
 
         # x = x + label_embed
 
