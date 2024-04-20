@@ -124,11 +124,7 @@ class PixelCNN(nn.Module):
         self.nin_out = nin(nr_filters, num_mix * nr_logistic_mix)
         self.init_padding = None
 
-        # beginning embedding
-        # self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=input_channels * 32 * 32)
-        
-        # after up pass embedding
-        self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=nr_filters)
+        self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=input_channels * 32 * 32)
 
     def forward(self, x, labels, sample=False):
         # torch.Size([25, 3, 32, 32])
@@ -153,9 +149,7 @@ class PixelCNN(nn.Module):
 
         label_embed = self.embedding(label_embed).to(device)
         
-        # label_embed = label_embed.reshape(B, self.nr_filters, H, W)
-        label_embed = label_embed.unsqueeze(-1)
-        label_embed = label_embed.unsqueeze(-1).to(device)
+        label_embed = label_embed.reshape(B, D, H, W)
 
         # x = x + label_embed
 
@@ -186,11 +180,11 @@ class PixelCNN(nn.Module):
                 u_list  += [self.downsize_u_stream[i](u_list[-1])]
                 ul_list += [self.downsize_ul_stream[i](ul_list[-1])]
 
-        for i in range(0, len(u_list)):
-            u_list[i] = u_list[i] + label_embed
+        # for i in range(0, len(u_list)):
+        #     u_list[i] = u_list[i] + label_embed
 
-        for i in range(0, len(ul_list)):
-            ul_list[i] = ul_list[i] + label_embed
+        # for i in range(0, len(ul_list)):
+        #     ul_list[i] = ul_list[i] + label_embed
 
         ###    DOWN PASS    ###
         u  = u_list.pop()
