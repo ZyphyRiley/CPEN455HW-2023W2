@@ -47,6 +47,7 @@ def train_or_test(model, data_loader, optimizer, loss_op, device, args, epoch, m
                 original_label = torch.tensor(original_label, dtype=torch.int64).to(device)
                 print(original_label, "val")
                 y_pred = model.classify(model_input, len(my_bidict))
+                print(y_pred == original_label)
                 val_acc.update(torch.sum(y_pred == original_label).item(), B)
         
     if args.en_wandb:
