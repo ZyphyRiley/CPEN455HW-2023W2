@@ -25,6 +25,11 @@ def train_or_test(model, data_loader, optimizer, loss_op, device, args, epoch, m
     for batch_idx, item in enumerate(tqdm(data_loader)):
         model_input, label = item # modified to take label and pass it to the model
         model_input = model_input.to(device)
+
+        if mode == 'test':
+            print("testing begins")
+            loss = model.classify(model_input, len(my_bidict))
+
         model_output = model(model_input, label)
         loss = loss_op(model_input, model_output)
         loss_tracker.update(loss.item()/deno)
@@ -199,14 +204,14 @@ if __name__ == '__main__':
         
         # decrease learning rate
         scheduler.step()
-        # train_or_test(model = model,
-        #               data_loader = test_loader,
-        #               optimizer = optimizer,
-        #               loss_op = loss_op,
-        #               device = device,
-        #               args = args,
-        #               epoch = epoch,
-        #               mode = 'test')
+        train_or_test(model = model,
+                      data_loader = test_loader,
+                      optimizer = optimizer,
+                      loss_op = loss_op,
+                      device = device,
+                      args = args,
+                      epoch = epoch,
+                      mode = 'test')
         
         train_or_test(model = model,
                       data_loader = val_loader,

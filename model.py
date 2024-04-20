@@ -210,6 +210,31 @@ class PixelCNN(nn.Module):
 
         return x_out
     
+    def classify(self, x, num_classes):
+        B, D, H, W = x.shape
+        device = x.device
+
+        my_bidict = {'Class0': 0, 
+                    'Class1': 1,
+                    'Class2': 2,
+                    'Class3': 3}
+
+        losses = []
+        i = 0
+
+        for key in my_bidict.keys():
+            label = (label, ) * B
+            model_output = self(x, label)
+
+            losses.append(discretized_mix_logistic_loss(x, model_output, batch=False))
+            i += 1
+
+        print("loss list: ", losses)
+        loss = min(losses)
+        print("loss: ", loss)
+
+        return loss
+    
     
 class random_classifier(nn.Module):
     def __init__(self, NUM_CLASSES):
