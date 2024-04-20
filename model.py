@@ -230,13 +230,17 @@ class PixelCNN(nn.Module):
 
 
             losses = (discretized_mix_logistic_loss(x, model_output, batch=False))
-            
-            for i in range(0, B):
-                print("losses:", losses[i])
-                print("y_losses:", y_losses[i])
-                if losses[i] < y_losses[i]:
-                    y_losses = losses[i]
-                    y_pred[i] = my_bidict[key]
+
+            #baseline case
+            if key == "Class0":
+                y_losses = losses
+            else:
+                for i in range(0, B):
+                    print("losses:", losses[i])
+                    print("y_losses:", y_losses[i])
+                    if losses[i] < y_losses[i]:
+                        y_losses = losses[i]
+                        y_pred[i] = my_bidict[key]
 
         return y_pred
     
