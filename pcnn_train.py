@@ -31,7 +31,8 @@ def train_or_test(model, data_loader, optimizer, loss_op, device, args, epoch, m
         B = model_input.shape[0]
 
         if mode == 'test':
-            y_pred, y_losses = model.classify(model_input, len(my_bidict)).to(device)
+            y_pred, y_losses = model.classify(model_input, len(my_bidict))
+            y_losses = y_losses.to(device)
             loss_tracker.update(torch.sum(y_losses).item()/deno)
             # calculate losses to not divide by zero
         else:
