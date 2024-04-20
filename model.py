@@ -124,7 +124,7 @@ class PixelCNN(nn.Module):
         self.nin_out = nin(nr_filters, num_mix * nr_logistic_mix)
         self.init_padding = None
 
-        self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=nr_filters * 32 * 32)
+        self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=input_channels * 32 * 32)
 
     def forward(self, x, labels, sample=False):
         # torch.Size([25, 3, 32, 32])
@@ -151,11 +151,11 @@ class PixelCNN(nn.Module):
 
         label_embed = self.embedding(label_embed).to(device)
         
-        label_embed = label_embed.reshape(B, self.nr_filters, H, W)
+        label_embed = label_embed.reshape(B, D, H, W)
 
         # NN EMBEDDING SOLUTION ##
 
-        # x = x + label_embed
+        x = x + label_embed
 
         if self.init_padding is not sample:
             xs = [int(y) for y in x.size()]
@@ -172,7 +172,6 @@ class PixelCNN(nn.Module):
         x = x if sample else torch.cat((x, self.init_padding), 1)
         u_list  = [self.u_init(x)]
         ul_list = [self.ul_init[0](x) + self.ul_init[1](x)]
-        print(u_list[0].shape, label_embed.shape)
 
         for i in range(3):
             # resnet block
@@ -180,22 +179,20 @@ class PixelCNN(nn.Module):
             u_list  += u_out
             ul_list += ul_out
 
-            for j in range(0, len(u_list)):
-                print(u_list[j].shape)
-                u_list[j] = u_list[j] + label_embed
-
-            for j in range(0, len(ul_list)):
-                ul_list[j] = ul_list[j] + label_embed
-
-
             if i != 2:
                 # downscale (only twice)
                 u_list  += [self.downsize_u_stream[i](u_list[-1])]
                 ul_list += [self.downsize_ul_stream[i](ul_list[-1])]
 
+        # for i in range(0, len(u_list)):
+        #     u_list[i] = u_list[i] + label_embed
+
+        # for i in range(0, len(ul_list)):
+        #     ul_list[i] = ul_list[i] + label_embed
+
         ###    DOWN PASS    ###
-        u  = u_list.pop() + label_embed
-        ul = ul_list.pop() + label_embed
+        u  = u_list.pop()
+        ul = ul_list.pop()
 
         for i in range(3):
             # resnet block
