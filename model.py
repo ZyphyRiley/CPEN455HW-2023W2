@@ -142,41 +142,43 @@ class PixelCNN(nn.Module):
 
         ## NN EMBEDDING SOLUTION ##
 
-        indices = []
+        # indices = []
 
-        # change all labels into indices
-        for label in labels:
-            if label == "Class0":
-                indices.append(0)
-            elif label == "Class1":
-                indices.append(1)
-            elif label == "Class2":
-                indices.append(2)
-            else:
-                indices.append(3)
+        # # change all labels into indices
+        # for label in labels:
+        #     if label == "Class0":
+        #         indices.append(0)
+        #     elif label == "Class1":
+        #         indices.append(1)
+        #     elif label == "Class2":
+        #         indices.append(2)
+        #     else:
+        #         indices.append(3)
 
-        label_embed = torch.FloatTensor(indices).to(device)
+        # label_embed = torch.FloatTensor(indices).to(device)
 
-        label_embed = self.embedding(label_embed).to(device)
+        # label_embed = self.embedding(label_embed).to(device)
 
         # NN EMBEDDING SOLUTION ##
 
         # APE SOLUTION ##
 
-        # encoding = torch.Tensor().to(device)
+        encoding = torch.Tensor().to(device)
 
-        # for label in labels:
-        #     if label == "Class0":
-        #         encoding = torch.cat((encoding, torch.tensor([1, 0, 0, 0]).to(device)), 0)
-        #     elif label == "Class1":
-        #         encoding = torch.cat((encoding, torch.tensor([0, 1, 0, 0]).to(device)), 0)
-        #     elif label == "Class2":
-        #         encoding = torch.cat((encoding, torch.tensor([0, 0, 1, 0]).to(device)), 0)
-        #     else:
-        #         encoding = torch.cat((encoding, torch.tensor([0, 0, 0, 1]).to(device)), 0)
-        # #
+        for label in labels:
+            if label == "Class0":
+                encoding = torch.cat((encoding, torch.tensor([1, 0, 0, 0]).to(device)), 0)
+            elif label == "Class1":
+                encoding = torch.cat((encoding, torch.tensor([0, 1, 0, 0]).to(device)), 0)
+            elif label == "Class2":
+                encoding = torch.cat((encoding, torch.tensor([0, 0, 1, 0]).to(device)), 0)
+            else:
+                encoding = torch.cat((encoding, torch.tensor([0, 0, 0, 1]).to(device)), 0)
+        #
                 
-        # encoding = torch.reshape(encoding, (B, -1))
+        encoding = torch.reshape(encoding, (B, -1))
+
+        label_embed = self.embedding(encoding).to(device)
                 
         # out = torch.matmul(encoding, self.enc_W)
 
