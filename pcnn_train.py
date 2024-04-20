@@ -29,6 +29,9 @@ def train_or_test(model, data_loader, optimizer, loss_op, device, args, epoch, m
         model_input = model_input.to(device)
 
         B = model_input.shape[0]
+        for item in label:
+            print(item)
+            print(my_bidict[item])
 
         original_label = [my_bidict[item] for item in label]
         original_label = torch.tensor(original_label, dtype=torch.int64).to(device)
