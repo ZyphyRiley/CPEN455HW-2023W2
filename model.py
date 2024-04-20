@@ -150,7 +150,7 @@ class PixelCNN(nn.Module):
         label_embed = torch.FloatTensor(indices).to(device)
 
         label_embed = self.embedding(label_embed).to(device)
-        print("before reshape:":, label_embed.shape)
+        print("before reshape:", label_embed.shape)
         
         label_embed = label_embed.reshape(B, D, H, W)
 
