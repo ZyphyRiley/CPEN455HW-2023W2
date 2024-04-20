@@ -148,8 +148,8 @@ class PixelCNN(nn.Module):
         label_embed = torch.LongTensor(indices).to(device)
 
         label_embed = self.embedding(label_embed).to(device)
-
-        label_embed = label_embed.reshape(B, self.nr_filters, 32, 32)
+        
+        label_embed = label_embed.reshape(B, self.nr_filters, H, W)
 
         # x = x + label_embed
 
@@ -167,7 +167,7 @@ class PixelCNN(nn.Module):
         ###      UP PASS    ###
         x = x if sample else torch.cat((x, self.init_padding), 1)
         u_list  = [self.u_init(x) + label_embed]
-        ul_list = [self.ul_init[0](x) + self.ul_init[1] + label_embed]
+        ul_list = [self.ul_init[0](x) + self.ul_init[1](x) + label_embed]
 
         for i in range(3):
             # resnet block
