@@ -46,7 +46,8 @@ def train_or_test(model, data_loader, optimizer, loss_op, device, args, epoch, m
                 original_label = [my_bidict[item] for item in label]
                 original_label = torch.tensor(original_label, dtype=torch.int64).to(device)
 
-                y_pred, y_losses = model.classify(model_input, len(my_bidict)).to(device)
+                y_pred, y_losses = model.classify(model_input, len(my_bidict))
+                y_pred = y_pred.to(device)
                 val_acc.update(torch.eq(y_pred, original_label).item(), B)
         
     if args.en_wandb:
