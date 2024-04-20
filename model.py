@@ -201,7 +201,6 @@ class PixelCNN(nn.Module):
 
         x_out = self.nin_out(F.elu(ul))
         # 16, 30, 32, 32
-        print("x_out:", x_out.shape)
         x_out = x_out + label_embed
 
         assert len(u_list) == len(ul_list) == 0, pdb.set_trace()
