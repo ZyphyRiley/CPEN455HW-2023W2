@@ -149,6 +149,8 @@ class PixelCNN(nn.Module):
 
         label_embed = self.embedding(label_embed).to(device)
 
+        label_embed = label_embed.reshape(B, self.nr_filters, 32, 32)
+
         # x = x + label_embed
 
         if self.init_padding is not sample:
