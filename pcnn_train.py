@@ -30,7 +30,7 @@ def train_or_test(model, data_loader, optimizer, loss_op, device, args, epoch, m
 
         B = model_input.shape[0]
 
-        original_label = [my_bidict[item] for item in categories]
+        original_label = [my_bidict[item] for item in label]
         original_label = torch.tensor(original_label, dtype=torch.int64).to(device)
 
         if mode == 'test':
