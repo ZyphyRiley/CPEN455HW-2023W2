@@ -221,7 +221,7 @@ class PixelCNN(nn.Module):
         # And get the predicted label, which is a tensor of shape (batch_size,)
 
         y_pred = torch.zeros((B, ))
-        y_losses = torch.ones((B, )) * 1e99
+        y_losses = torch.full((B, ), float('inf'))
         print(y_losses)
 
         for key in my_bidict.keys():
@@ -232,8 +232,8 @@ class PixelCNN(nn.Module):
             losses = (discretized_mix_logistic_loss(x, model_output, batch=False))
             
             for i in range(0, B):
-                # print("losses:", losses[i])
-                # print("y_losses:", y_losses[i])
+                print("losses:", losses[i])
+                print("y_losses:", y_losses[i])
                 if losses[i] < y_losses[i]:
                     y_losses = losses[i]
                     y_pred[i] = my_bidict[key]
