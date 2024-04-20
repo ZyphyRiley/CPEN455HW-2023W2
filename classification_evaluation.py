@@ -19,15 +19,7 @@ NUM_CLASSES = len(my_bidict)
 # And get the predicted label, which is a tensor of shape (batch_size,)
 # Begin of your code
 def get_label(model, model_input, device):
-    class_loss = []
-    answer = 0
-    
-    for i in range(0, NUM_CLASSES):
-        label = list(my_bidict.keys())[i]
-        print("shape:", model_input.shape)
-        model_output = model(model_input, label)
-        loss = discretized_mix_logistic_loss(model_input, model_output)
-
+    answer = model.classify(model_input, len(my_bidict))
     return answer
 # End of your code
 
