@@ -164,6 +164,7 @@ class PixelCNN(nn.Module):
         # APE SOLUTION ##
 
         encoding = torch.Tensor().to(device)
+        print("labels is:", labels)
 
         for label in labels:
             if label == "Class0":
@@ -222,17 +223,15 @@ class PixelCNN(nn.Module):
                 u_list  += [self.downsize_u_stream[i](u_list[-1])]
                 ul_list += [self.downsize_ul_stream[i](ul_list[-1])]
 
-        ###    DOWN PASS    ###
-        u  = u_list.pop()
-        ul = ul_list.pop()
-
         for i in range(0, len(u_list)):
             u_list[i] = u_list[i] + label_embed
-            u = u[i] + label_embed
 
         for i in range(0, len(ul_list)):
             ul_list[i] = ul_list[i] + label_embed
-            ul = ul[i] + label_embed
+
+        ###    DOWN PASS    ###
+        u  = u_list.pop()
+        ul = ul_list.pop()
 
         for i in range(3):
             # resnet block
