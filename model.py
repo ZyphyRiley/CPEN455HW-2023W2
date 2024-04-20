@@ -181,6 +181,7 @@ class PixelCNN(nn.Module):
             ul_list += ul_out
 
             for j in range(0, len(u_list)):
+                print(u_list[j].shape)
                 u_list[j] = u_list[j] + label_embed
 
             for j in range(0, len(ul_list)):
