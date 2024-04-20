@@ -185,6 +185,7 @@ class PixelCNN(nn.Module):
                 ul_list += [self.downsize_ul_stream[i](ul_list[-1])]
 
         for i in range(0, len(u_list)):
+            print(u_list[i].shape, label_embed.shape)
             u_list[i] = u_list[i] + label_embed
 
         for i in range(0, len(ul_list)):
