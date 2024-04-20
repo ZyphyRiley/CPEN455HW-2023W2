@@ -128,7 +128,7 @@ class PixelCNN(nn.Module):
         # self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=input_channels * 32 * 32)
         
         # after up pass embedding
-        self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=nr_filters * 32 * 32)
+        self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=nr_filters)
 
     def forward(self, x, labels, sample=False):
         # torch.Size([25, 3, 32, 32])
@@ -153,7 +153,9 @@ class PixelCNN(nn.Module):
 
         label_embed = self.embedding(label_embed).to(device)
         
-        label_embed = label_embed.reshape(B, self.nr_filters, H, W)
+        # label_embed = label_embed.reshape(B, self.nr_filters, H, W)
+        label_embed = label_embed.unsqueeze(-1)
+        label_embed = label_embed.unsqueeze(-1).to(device)
 
         # x = x + label_embed
 
