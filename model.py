@@ -231,6 +231,9 @@ class PixelCNN(nn.Module):
 
             losses = (discretized_mix_logistic_loss(x, model_output, batch=False))
             print(losses.shape, y_losses.shape)
+            print(losses)
+            print(losses[1])
+            print(y_losses[1])
             
             for i in range(0, B):
                 if losses[i] < y_losses[i]:
