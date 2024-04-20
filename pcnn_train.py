@@ -27,7 +27,6 @@ def train_or_test(model, data_loader, optimizer, loss_op, device, args, epoch, m
         model_input = model_input.to(device)
         model_output = model(model_input, label)
         loss = loss_op(model_input, model_output)
-        print("loss.item()", loss.item())
         loss_tracker.update(loss.item()/deno)
         if mode == 'training':
             optimizer.zero_grad()
@@ -244,3 +243,8 @@ if __name__ == '__main__':
             if not os.path.exists("models"):
                 os.makedirs("models")
             torch.save(model.state_dict(), 'models/{}_{}.pth'.format(model_name, epoch))
+
+        if epoch % args.classify_interval == 0:
+            print("classifying")
+            for label in my_bidict.keys():
+                model

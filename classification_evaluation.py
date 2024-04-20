@@ -19,10 +19,12 @@ NUM_CLASSES = len(my_bidict)
 # And get the predicted label, which is a tensor of shape (batch_size,)
 # Begin of your code
 def get_label(model, model_input, device):
-    model_output = model(model_input, device)
+    losses = []
     
-    answer = torch.min(discretized_mix_logistic_loss(model_input, model_output))
+    model_output = model(model_input, device)
 
+
+    answer = min(losses)
     return answer
 # End of your code
 

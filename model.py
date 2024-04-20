@@ -204,8 +204,8 @@ class PixelCNN(nn.Module):
         ###      UP PASS    ###
         x = x if sample else torch.cat((x, self.init_padding), 1)
         # u_list  = [self.u_init(x) + posEnc]
-        u_list  = [self.u_init(x) + label_embed]
-        ul_list = [self.ul_init[0](x) + self.ul_init[1](x) + label_embed]
+        u_list  = [self.u_init(x)]
+        ul_list = [self.ul_init[0](x) + self.ul_init[1](x)]
 
         # print("x.shape: ", x.shape) # find the shape, 
         # print("initial:", len(u_list))
@@ -223,11 +223,11 @@ class PixelCNN(nn.Module):
                 u_list  += [self.downsize_u_stream[i](u_list[-1])]
                 ul_list += [self.downsize_ul_stream[i](ul_list[-1])]
 
-        for i in range(0, len(u_list)):
-            u_list[i] = u_list[i] + label_embed
+        # for i in range(0, len(u_list)):
+        #     u_list[i] = u_list[i] + label_embed
 
-        for i in range(0, len(ul_list)):
-            ul_list[i] = ul_list[i] + label_embed
+        # for i in range(0, len(ul_list)):
+        #     ul_list[i] = ul_list[i] + label_embed
 
         ###    DOWN PASS    ###
         u  = u_list.pop()
@@ -243,8 +243,11 @@ class PixelCNN(nn.Module):
                 ul = self.upsize_ul_stream[i](ul)
 
         x_out = self.nin_out(F.elu(ul))
+        print("x_out:", x_out.shape)
 
         assert len(u_list) == len(ul_list) == 0, pdb.set_trace()
+
+        x_out = x_out + label_embed
 
         return x_out
     
