@@ -124,7 +124,9 @@ class PixelCNN(nn.Module):
         self.nin_out = nin(nr_filters, num_mix * nr_logistic_mix)
         self.init_padding = None
 
-        self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=32)
+        # self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=nr_filters)
+
+        self.embedding = nn.Linear(4, nr_filters)
 
         # # absolute positional encoding
         # self.ape = AbsolutePositionalEncoding(nr_filters)
@@ -182,8 +184,8 @@ class PixelCNN(nn.Module):
 
         ## APE SOLUTION ##
 
-        label_embed = label_embed.unsqueeze(1)
-        label_embed = label_embed.unsqueeze(-1).expand(B, -1, 32, 32).to(device)
+        label_embed = label_embed.unsqueeze(-1)
+        label_embed = label_embed.unsqueeze(-1)
 
         if self.init_padding is not sample:
             xs = [int(y) for y in x.size()]
