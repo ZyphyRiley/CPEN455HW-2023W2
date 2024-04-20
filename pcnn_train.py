@@ -31,7 +31,9 @@ def train_or_test(model, data_loader, optimizer, loss_op, device, args, epoch, m
         B = model_input.shape[0]
 
         original_label = [my_bidict[item] for item in label]
+        print(original_label)
         original_label = torch.tensor(original_label, dtype=torch.int64).to(device)
+        print(original_label)
 
         if mode == 'test':
             y_pred = model.classify(model_input, len(my_bidict))
