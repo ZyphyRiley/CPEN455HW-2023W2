@@ -126,9 +126,9 @@ class PixelCNN(nn.Module):
 
         self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=input_channels * 32 * 32)
 
-        self.ape = AbsolutePositionalEncoding(input_channels * 32 * 32)
+        self.ape = AbsolutePositionalEncoding(nr_filters * 32 * 32)
 
-        self.enc_W = nn.Parameter(torch.empty(4, input_channels * 32 * 32))
+        self.enc_W = nn.Parameter(torch.empty(4, nr_filters * 32 * 32))
 
     def forward(self, x, labels, sample=False):
         # torch.Size([25, 3, 32, 32])
@@ -172,9 +172,9 @@ class PixelCNN(nn.Module):
 
         label_embed = self.ape(out)
         
-        label_embed = label_embed.reshape(B, D, H, W).to(device)
+        label_embed = label_embed.reshape(B, self.nr_filters, H, W).to(device)
 
-        x = x + label_embed
+        # x = x + label_embed
 
         if self.init_padding is not sample:
             xs = [int(y) for y in x.size()]
@@ -189,8 +189,8 @@ class PixelCNN(nn.Module):
 
         ###      UP PASS    ###
         x = x if sample else torch.cat((x, self.init_padding), 1)
-        u_list  = [self.u_init(x)]
-        ul_list = [self.ul_init[0](x) + self.ul_init[1](x)]
+        u_list  = [self.u_init(x) + label_embed]
+        ul_list = [self.ul_init[0](x) + self.ul_init[1] + label_embed]
 
         for i in range(3):
             # resnet block
