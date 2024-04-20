@@ -223,8 +223,6 @@ class PixelCNN(nn.Module):
         y_pred = torch.zeros((B, ))
         y_losses = torch.full((B, ), float('inf'))
 
-        print("shape", y_pred.shape)
-
         for key in my_bidict.keys():
             label = (key, ) * B
             model_output = self(x, label)
@@ -236,7 +234,6 @@ class PixelCNN(nn.Module):
                     y_losses[i] = losses[i]
                     y_pred[i] = my_bidict[key]
 
-        print("shape after", y_pred.shape)
         return y_pred, y_losses
     
     
