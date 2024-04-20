@@ -151,7 +151,7 @@ class PixelCNN(nn.Module):
         
         label_embed = label_embed.reshape(B, D, H, W)
 
-        # x = x + label_embed
+        x = x + label_embed
 
         if self.init_padding is not sample:
             xs = [int(y) for y in x.size()]
