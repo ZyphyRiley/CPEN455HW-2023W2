@@ -36,8 +36,9 @@ if __name__ == "__main__":
         os.makedirs(gen_data_dir)
     #Begin of your code
     #Load your model and generate images in the gen_data_dir
-    model = PixelCNN(nr_resnet=1, nr_filters=20, input_channels=3, nr_logistic_mix=3)
+    model = PixelCNN(nr_resnet=2, nr_filters=40, input_channels=3, nr_logistic_mix=5)
     model = model.to(device)
+    model.load_state_dict(torch.load('models/conditional_pixelcnn.pth', map_location=device)) # MODIFICATION TO RUN ON CPU IF TRAINED ON GPU
     model = model.eval()
     my_sample(model=model, gen_data_dir=gen_data_dir)
     #End of your code
