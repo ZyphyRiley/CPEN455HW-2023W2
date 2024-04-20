@@ -223,7 +223,7 @@ class PixelCNN(nn.Module):
         i = 0
 
         for key in my_bidict.keys():
-            label = (label, ) * B
+            label = (key, ) * B
             model_output = self(x, label)
 
             losses.append(discretized_mix_logistic_loss(x, model_output, batch=False))
