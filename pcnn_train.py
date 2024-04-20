@@ -49,7 +49,7 @@ def train_or_test(model, data_loader, optimizer, loss_op, device, args, epoch, m
 
                 y_pred, y_losses = model.classify(model_input, len(my_bidict))
                 y_pred = y_pred.to(device)
-                val_acc.update(torch.eq(y_pred, original_label).item(), B)
+                val_acc.update(torch.sum(y_pred == original_label).item(), B)
         
     if args.en_wandb:
         wandb.log({mode + "-Average-BPD" : loss_tracker.get_mean()})
