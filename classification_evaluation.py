@@ -24,6 +24,7 @@ def get_label(model, model_input, device):
     
     for i in range(0, NUM_CLASSES):
         label = list(my_bidict.keys())[i]
+        print("shape:", model_input.shape)
         model_output = model(model_input, label)
         loss = discretized_mix_logistic_loss(model_input, model_output)
 
