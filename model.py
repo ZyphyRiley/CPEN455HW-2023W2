@@ -172,6 +172,7 @@ class PixelCNN(nn.Module):
         x = x if sample else torch.cat((x, self.init_padding), 1)
         u_list  = [self.u_init(x)]
         ul_list = [self.ul_init[0](x) + self.ul_init[1](x)]
+        print(u_list.shape, label_embed.shape)
 
         for i in range(3):
             # resnet block
