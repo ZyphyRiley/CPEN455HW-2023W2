@@ -213,27 +213,30 @@ class PixelCNN(nn.Module):
     def classify(self, x, num_classes):
         B, D, H, W = x.shape
         device = x.device
-
         my_bidict = {'Class0': 0, 
                     'Class1': 1,
                     'Class2': 2,
                     'Class3': 3}
+        
+        # And get the predicted label, which is a tensor of shape (batch_size,)
 
-        losses = []
-        i = 0
+        y_pred = torch.zeros((B, ))
+        y_losses = torch.ones((B, )) * float('inf')
+        print(y_losses)
 
         for key in my_bidict.keys():
             label = (key, ) * B
             model_output = self(x, label)
 
-            losses.append(discretized_mix_logistic_loss(x, model_output, batch=False))
-            i += 1
 
-        print("loss list: ", losses)
-        loss = min(losses)
-        print("loss: ", loss)
+            losses = (discretized_mix_logistic_loss(x, model_output, batch=False))
+            
+            for i in range(0, B):
+                if losses[i] < y_losses[i]:
+                    y_losses = losses[i]
+                    y_pred[i] = my_bidict[key]
 
-        return loss
+        return y_pred
     
     
 class random_classifier(nn.Module):
