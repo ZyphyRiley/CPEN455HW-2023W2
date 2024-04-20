@@ -234,7 +234,7 @@ class PixelCNN(nn.Module):
                     y_losses[i] = losses[i]
                     y_pred[i] = my_bidict[key]
 
-        return y_pred
+        return y_pred, y_losses
     
     
 class random_classifier(nn.Module):

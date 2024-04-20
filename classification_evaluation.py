@@ -19,7 +19,7 @@ NUM_CLASSES = len(my_bidict)
 # And get the predicted label, which is a tensor of shape (batch_size,)
 # Begin of your code
 def get_label(model, model_input, device):
-    answer = model.classify(model_input, len(my_bidict))
+    answer, _ = model.classify(model_input, len(my_bidict))
     return answer
 # End of your code
 
