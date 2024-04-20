@@ -30,10 +30,10 @@ def train_or_test(model, data_loader, optimizer, loss_op, device, args, epoch, m
 
         B = model_input.shape[0]
 
-        original_label = [my_bidict[item] for item in label]
-        original_label = torch.tensor(original_label, dtype=torch.int64).to(device)
-
         if mode == 'test':
+            original_label = [my_bidict[item] for item in label]
+            original_label = torch.tensor(original_label, dtype=torch.int64).to(device)
+            print(original_label, "test")
             y_pred = model.classify(model_input, len(my_bidict))
         else:
             model_output = model(model_input, label)
@@ -44,6 +44,9 @@ def train_or_test(model, data_loader, optimizer, loss_op, device, args, epoch, m
                 loss.backward()
                 optimizer.step()
             else: # mode == val
+                original_label = [my_bidict[item] for item in label]
+                original_label = torch.tensor(original_label, dtype=torch.int64).to(device)
+                print(original_label, "val")
                 y_pred = model.classify(model_input, len(my_bidict))
                 val_acc.update(torch.sum(y_pred == original_label), B)
         
