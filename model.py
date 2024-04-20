@@ -124,15 +124,7 @@ class PixelCNN(nn.Module):
         self.nin_out = nin(nr_filters, num_mix * nr_logistic_mix)
         self.init_padding = None
 
-        # self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=nr_filters)
-
-        self.embedding = nn.Linear(4, nr_filters)
-
-        # # absolute positional encoding
-        # self.ape = AbsolutePositionalEncoding(nr_filters)
-
-        # # encode vocab size to model dimensions
-        # self.enc_W = nn.Parameter(torch.empty((4, nr_filters)))
+        self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=input_channels * 32 * 32)
 
     def forward(self, x, labels, sample=False):
         # torch.Size([25, 3, 32, 32])
@@ -142,52 +134,31 @@ class PixelCNN(nn.Module):
 
         ## NN EMBEDDING SOLUTION ##
 
-        # indices = []
+        indices = []
 
-        # # change all labels into indices
-        # for label in labels:
-        #     if label == "Class0":
-        #         indices.append(0)
-        #     elif label == "Class1":
-        #         indices.append(1)
-        #     elif label == "Class2":
-        #         indices.append(2)
-        #     else:
-        #         indices.append(3)
+        # change all labels into indices
+        for label in labels:
+            if label == "Class0":
+                indices.append(0)
+            elif label == "Class1":
+                indices.append(1)
+            elif label == "Class2":
+                indices.append(2)
+            else:
+                indices.append(3)
 
-        # label_embed = torch.FloatTensor(indices).to(device)
+        label_embed = torch.FloatTensor(indices).to(device)
 
-        # label_embed = self.embedding(label_embed).to(device)
+        label_embed = self.embedding(label_embed).to(device)
+        print("before reshape:":, label_embed.shape)
+        
+        label_embed = label_embed.reshape(B, D, H, W)
+
+        print("after reshape: ",label_embed.shape)
 
         # NN EMBEDDING SOLUTION ##
 
-        # APE SOLUTION ##
-
-        encoding = torch.Tensor().to(device)
-
-        for label in labels:
-            if label == "Class0":
-                encoding = torch.cat((encoding, torch.tensor([1, 0, 0, 0]).to(device)), 0)
-            elif label == "Class1":
-                encoding = torch.cat((encoding, torch.tensor([0, 1, 0, 0]).to(device)), 0)
-            elif label == "Class2":
-                encoding = torch.cat((encoding, torch.tensor([0, 0, 1, 0]).to(device)), 0)
-            else:
-                encoding = torch.cat((encoding, torch.tensor([0, 0, 0, 1]).to(device)), 0)
-        #
-                
-        encoding = torch.reshape(encoding, (B, -1))
-
-        label_embed = self.embedding(encoding).to(device)
-                
-        # out = torch.matmul(encoding, self.enc_W)
-
-        # label_embed = self.ape(out)
-
-        ## APE SOLUTION ##
-
-        label_embed = label_embed.unsqueeze(-1)
-        label_embed = label_embed.unsqueeze(-1)
+        x = x + label_embed
 
         if self.init_padding is not sample:
             xs = [int(y) for y in x.size()]
@@ -202,15 +173,9 @@ class PixelCNN(nn.Module):
 
         ###      UP PASS    ###
         x = x if sample else torch.cat((x, self.init_padding), 1)
-        # u_list  = [self.u_init(x) + posEnc]
         u_list  = [self.u_init(x)]
         ul_list = [self.ul_init[0](x) + self.ul_init[1](x)]
 
-        # print("x.shape: ", x.shape) # find the shape, 
-        # print("initial:", len(u_list))
-        # print("u_list[0].shape: ", u_list[0].shape)
-        # print("ul_list[0].shape: ", ul_list[0].shape)
-        # B, nr_filters, 32, 32
         for i in range(3):
             # resnet block
             u_out, ul_out = self.up_layers[i](u_list[-1], ul_list[-1])
@@ -222,11 +187,11 @@ class PixelCNN(nn.Module):
                 u_list  += [self.downsize_u_stream[i](u_list[-1])]
                 ul_list += [self.downsize_ul_stream[i](ul_list[-1])]
 
-        for i in range(0, len(u_list)):
-            u_list[i] = u_list[i] + label_embed
+        # for i in range(0, len(u_list)):
+        #     u_list[i] = u_list[i] + label_embed
 
-        for i in range(0, len(ul_list)):
-            ul_list[i] = ul_list[i] + label_embed
+        # for i in range(0, len(ul_list)):
+        #     ul_list[i] = ul_list[i] + label_embed
 
         ###    DOWN PASS    ###
         u  = u_list.pop()
