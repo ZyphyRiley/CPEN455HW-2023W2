@@ -203,8 +203,8 @@ class PixelCNN(nn.Module):
         ###      UP PASS    ###
         x = x if sample else torch.cat((x, self.init_padding), 1)
         # u_list  = [self.u_init(x) + posEnc]
-        u_list  = [self.u_init(x)]
-        ul_list = [self.ul_init[0](x) + self.ul_init[1](x)]
+        u_list  = [self.u_init(x) + label_embed]
+        ul_list = [self.ul_init[0](x) + self.ul_init[1](x) + label_embed]
 
         # print("x.shape: ", x.shape) # find the shape, 
         # print("initial:", len(u_list))
