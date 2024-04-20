@@ -221,7 +221,7 @@ class PixelCNN(nn.Module):
         # And get the predicted label, which is a tensor of shape (batch_size,)
 
         y_pred = torch.zeros((B, ))
-        y_losses = torch.full((B, ), 1e20)
+        y_losses = torch.ones((B, ))
         print(y_losses)
 
         for key in my_bidict.keys():
