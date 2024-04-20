@@ -124,7 +124,7 @@ class PixelCNN(nn.Module):
         self.nin_out = nin(nr_filters, num_mix * nr_logistic_mix)
         self.init_padding = None
 
-        self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=input_channels * 32 * 32)
+        self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=nr_filters * 32 * 32)
 
     def forward(self, x, labels, sample=False):
         # torch.Size([25, 3, 32, 32])
@@ -151,7 +151,7 @@ class PixelCNN(nn.Module):
 
         label_embed = self.embedding(label_embed).to(device)
         
-        label_embed = label_embed.reshape(B, D, H, W)
+        label_embed = label_embed.reshape(B, self.nr_filters, H, W)
 
         # NN EMBEDDING SOLUTION ##
 
