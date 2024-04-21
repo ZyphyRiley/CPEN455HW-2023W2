@@ -36,9 +36,12 @@ def classify_and_submit(model, data_loader, device):
             model_input = model_input.to(device)
             answer, logits = get_label_logits(model, model_input, device)
 
+            print("asnwer", answer)
+
             full_logits = torch.cat((full_logits, logits), 0)
             full_answers.extend(answer)
 
+    print(full_answers)
     torch.save(full_logits, 'test_logits.pt')
 
 
@@ -57,7 +60,7 @@ def classify_and_submit(model, data_loader, device):
         for _, _, filename in os.walk(path, topdown=True):
             csvwriter.writerow([filename, str(answer[i])])
             i += 1
-            
+
         csvwriter.writerow(fid)
         
 
