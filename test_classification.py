@@ -36,9 +36,9 @@ def classify_and_submit(model, data_loader, device):
             model_input = model_input.to(device)
             answer, logits = get_label_logits(model, model_input, device)
 
-            print("asnwer", answer)
-
             full_logits = torch.cat((full_logits, logits), 0)
+
+            full_answers.tolist()
             full_answers.extend(answer)
 
     print(full_answers)
