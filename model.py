@@ -186,12 +186,13 @@ class PixelCNN(nn.Module):
         # calculate the loss for each label
         if logits:
             y_logits = torch.zeros((B, num_classes))
+            
+            for key in my_bidict.keys():
+                label = (key, ) * B
+                model_output = self(x, label)
 
-            label = (key, ) * B
-            model_output = self(x, label)
-
-            losses = (discretized_mix_logistic_loss(x, model_output))
-            print(losses.shape)
+                losses = (discretized_mix_logistic_loss(x, model_output))
+                print(losses.shape)
 
 
         else:
