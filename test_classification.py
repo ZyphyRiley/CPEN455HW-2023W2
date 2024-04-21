@@ -26,7 +26,7 @@ def classify_and_submit(model, data_loader, device):
     rows = []
     path = 'data/test'
     full_answers = []
-    full_logits = []
+    full_logits = torch.Tensor().to(device)
     
     model.eval()
     for batch_idx, item in enumerate(tqdm(data_loader)):
@@ -36,11 +36,9 @@ def classify_and_submit(model, data_loader, device):
             model_input = model_input.to(device)
             answer, logits = get_label_logits(model, model_input, device)
 
-            logits.tolist()
-            full_logits.extend(logits)
+            full_logits = torch.cat((full_logits, logits), 0)
             full_answers.extend(answer)
 
-    full_logits = torch.Tensor(full_logits).to(device)
     full_logits = full_logits.reshape(-1, 4).to(device)
     np.save('test_logits.npy', logits)
 
