@@ -99,8 +99,7 @@ class PixelCNN(nn.Module):
         self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=nr_filters * 32 * 32)
 
     def forward(self, x, labels, sample=False):
-        # torch.Size([25, 3, 32, 32])
-        # B = 16, D = 3, H/W = 32
+        # find dimensions
         B, D, H, W = x.shape
         device = x.device
 
@@ -121,6 +120,7 @@ class PixelCNN(nn.Module):
 
         label_embed = self.embedding(label_embed).to(device)
         
+        # reshape to match pixel info
         label_embed = label_embed.reshape(B, self.nr_filters, H, W)
 
         if self.init_padding is not sample:
@@ -136,6 +136,7 @@ class PixelCNN(nn.Module):
 
         ###      UP PASS    ###
         x = x if sample else torch.cat((x, self.init_padding), 1)
+        # fuse label information with pixels
         u_list  = [self.u_init(x) + label_embed]
         ul_list = [self.ul_init[0](x) + self.ul_init[1](x) + label_embed]
 
@@ -178,7 +179,7 @@ class PixelCNN(nn.Module):
                     'Class3': 3}
         
         # And get the predicted label, which is a tensor of shape (batch_size,)
-
+        # initialize predictions and losses
         y_pred = torch.zeros((B, ))
         y_losses = torch.full((B, ), float('inf'))
 
@@ -188,6 +189,7 @@ class PixelCNN(nn.Module):
 
             losses = (discretized_mix_logistic_loss(x, model_output, batch=False))
             
+            # if the loss is lower, replace in the tensor
             for i in range(0, B):
                 if losses[i] < y_losses[i]:
                     y_losses[i] = losses[i]
