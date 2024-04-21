@@ -58,6 +58,7 @@ def classify_and_submit(model, data_loader, device):
 
         i = 0
         for _, _, filename in os.walk(path, topdown=True):
+            print(filename)
             csvwriter.writerow([filename, str(answer[i])])
             i += 1
             print(i)
