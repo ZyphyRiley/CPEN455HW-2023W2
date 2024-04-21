@@ -191,7 +191,7 @@ class PixelCNN(nn.Module):
                 label = (key, ) * B
                 model_output = self(x, label)
 
-                losses = (discretized_mix_logistic_loss(x, model_output))
+                losses = (discretized_mix_logistic_loss(x, model_output, batch=False))
                 print(losses.shape)
 
 
