@@ -96,7 +96,6 @@ if __name__ == '__main__':
     model.load_state_dict(torch.load('models/conditional_pixelcnn.pth', map_location=device)) # MODIFICATION TO RUN ON CPU IF TRAINED ON GPU
     model.eval()
     print('model parameters loaded')
-    acc = classify_and_submit(model = model, data_loader = dataloader, device = device)
-    print(f"Accuracy: {acc}")
+    classify_and_submit(model = model, data_loader = dataloader, device = device)
         
         
