@@ -151,8 +151,6 @@ class PixelCNN(nn.Module):
         
         label_embed = label_embed.reshape(B, self.nr_filters, H, W)
 
-        # x = x + label_embed
-
         if self.init_padding is not sample:
             xs = [int(y) for y in x.size()]
             padding = Variable(torch.ones(xs[0], 1, xs[2], xs[3]), requires_grad=False)
@@ -181,8 +179,8 @@ class PixelCNN(nn.Module):
                 ul_list += [self.downsize_ul_stream[i](ul_list[-1])]
 
         ###    DOWN PASS    ###
-        u  = u_list.pop()
-        ul = ul_list.pop()
+        u  = u_list.pop() + label_embed
+        ul = ul_list.pop() + label_embed
 
         for i in range(3):
             # resnet block
