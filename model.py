@@ -180,8 +180,8 @@ class PixelCNN(nn.Module):
         
         # And get the predicted label, which is a tensor of shape (batch_size,)
         # initialize predictions and losses
-        y_pred = torch.zeros((B, ))
-        y_losses = torch.full((B, ), float('inf'))
+        y_pred = torch.zeros((B, )).to(device)
+        y_losses = torch.full((B, ), float('inf')).to(device)
 
         for key in my_bidict.keys():
             label = (key, ) * B
