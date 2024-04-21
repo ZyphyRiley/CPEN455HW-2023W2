@@ -1,34 +1,6 @@
 import torch.nn as nn
 from layers import *
 
-class AbsolutePositionalEncoding(nn.Module):
-    MAX_LEN = 512
-    def __init__(self, d_model):
-        super().__init__()
-        self.W = nn.Parameter(torch.empty((self.MAX_LEN, d_model)))
-        nn.init.normal_(self.W)
-
-    def forward(self, x):
-        """
-        args:
-            x: shape B x D
-        returns:
-            out: shape B x D
-        START BLOCK
-        """
-        # add rows of matrix self.W[i, :] to position 1 <= i <= N
-        B, D = x.shape
-        # 16, 20
-
-        out = torch.zeros(B, D)
-
-        for i in range(0, B):
-            out[i, :] = x[i, :] + self.W[i, :]
-        """
-        END BLOCK
-        """
-        return out
-
 
 class PixelCNNLayer_up(nn.Module):
     def __init__(self, nr_resnet, nr_filters, resnet_nonlinearity):
@@ -124,7 +96,7 @@ class PixelCNN(nn.Module):
         self.nin_out = nin(nr_filters, num_mix * nr_logistic_mix)
         self.init_padding = None
 
-        self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=nr_filters)
+        self.embedding = nn.Embedding(num_embeddings=4, embedding_dim=nr_filters * 32 * 32)
 
     def forward(self, x, labels, sample=False):
         # torch.Size([25, 3, 32, 32])
@@ -149,10 +121,7 @@ class PixelCNN(nn.Module):
 
         label_embed = self.embedding(label_embed).to(device)
         
-        label_embed = label_embed.unsqueeze(-1)
-        label_embed = label_embed.unsqueeze(-1).to(device)
-        
-        # label_embed = label_embed.reshape(B, self.nr_filters, H, W)
+        label_embed = label_embed.reshape(B, self.nr_filters, H, W)
 
         if self.init_padding is not sample:
             xs = [int(y) for y in x.size()]
@@ -182,8 +151,8 @@ class PixelCNN(nn.Module):
                 ul_list += [self.downsize_ul_stream[i](ul_list[-1])]
 
         ###    DOWN PASS    ###
-        u  = u_list.pop() + label_embed
-        ul = ul_list.pop() + label_embed
+        u  = u_list.pop()
+        ul = ul_list.pop()
 
         for i in range(3):
             # resnet block
