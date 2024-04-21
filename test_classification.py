@@ -22,7 +22,7 @@ def get_label_logits(model, model_input, device):
     answer, logits = model.classify(model_input, len(my_bidict), logits=True)
     return answer, logits
 
-def classify_and_submit(model, data_loader, device):
+def classify_and_submit(model, data_loader, device, dataset):
     rows = []
     path = 'data/test'
     full_answers = []
@@ -83,6 +83,7 @@ if __name__ == '__main__':
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     kwargs = {'num_workers':0, 'pin_memory':True, 'drop_last':False}
 
+
     ds_transforms = transforms.Compose([transforms.Resize((32, 32)), rescaling])
     dataloader = torch.utils.data.DataLoader(CPEN455Dataset(root_dir=args.data_dir, 
                                                             mode = args.mode, 
@@ -94,12 +95,14 @@ if __name__ == '__main__':
     model = PixelCNN(nr_resnet=2, nr_filters=40, 
             input_channels=3, nr_logistic_mix=5)
     
+    dataset = CPEN455Dataset(root_dir=args.data_dir, mode = args.mode, transform=ds_transforms)
+    
     model = model.to(device)
     #Attention: the path of the model is fixed to 'models/conditional_pixelcnn.pth'
     #You should save your model to this path
     model.load_state_dict(torch.load('models/conditional_pixelcnn.pth', map_location=device)) # MODIFICATION TO RUN ON CPU IF TRAINED ON GPU
     model.eval()
     print('model parameters loaded')
-    classify_and_submit(model = model, data_loader = dataloader, device = device)
+    classify_and_submit(model = model, data_loader = dataloader, device = device, dataset=dataset)
         
         
