@@ -38,7 +38,8 @@ def classify_and_submit(model, data_loader, device):
 
             full_logits = torch.cat((full_logits, logits), 0)
 
-            answer.tolist()
+            answer = [pred.item() for pred in answer]
+            print(type(answer[0]))
             print(answer)
             full_answers.extend(answer)
 
