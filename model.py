@@ -170,7 +170,7 @@ class PixelCNN(nn.Module):
 
         return x_out
     
-    def classify(self, x, num_classes):
+    def classify(self, x, num_classes, logits=False):
         B, D, H, W = x.shape
         device = x.device
         my_bidict = {'Class0': 0, 
@@ -182,6 +182,8 @@ class PixelCNN(nn.Module):
         # initialize predictions and losses
         y_pred = torch.zeros((B, )).to(device)
         y_losses = torch.full((B, ), float('inf')).to(device)
+        if logits:
+            y_logits = torch.zeros((B, num_classes))
 
         for key in my_bidict.keys():
             label = (key, ) * B
@@ -191,9 +193,12 @@ class PixelCNN(nn.Module):
             
             # if the loss is lower, replace in the tensor
             for i in range(0, B):
-                if losses[i] < y_losses[i]:
-                    y_losses[i] = losses[i]
-                    y_pred[i] = my_bidict[key]
+                if logits: # calculate logits for all labels
+                    y_logits[i] = losses
+                else:
+                    if losses[i] < y_losses[i]:
+                        y_losses[i] = losses[i]
+                        y_pred[i] = my_bidict[key]
 
         return y_pred, y_losses
     

@@ -19,7 +19,7 @@ import os
 
 
 def get_label_logits(model, model_input, device):
-    answer, logits = model.classify(model_input, len(my_bidict))
+    answer, logits = model.classify(model_input, len(my_bidict), logits=True)
     return answer, logits
 
 def classify_and_submit(model, data_loader, device):
