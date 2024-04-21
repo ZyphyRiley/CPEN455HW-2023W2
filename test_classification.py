@@ -41,7 +41,7 @@ def classify_and_submit(model, data_loader, device):
 
     print(full_logits.shape)
     full_logits = full_logits.reshape(-1, 4).to(device)
-    full_logits = full_logits.detach().numpy()
+    full_logits = full_logits.cpu().detach().numpy()
     np.save('test_logits.npy', logits)
 
     print(len(full_answers))
