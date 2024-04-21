@@ -31,15 +31,16 @@ def classify_and_submit(model, data_loader, device):
     
     model.eval()
     for batch_idx, item in enumerate(tqdm(data_loader)):
-        # model works in batches of 32
-        model_input, categories = item
-        model_input = model_input.to(device)
-        answer, logits = get_label_logits(model, model_input, device)
-        time.sleep(1)
+        with torch.no_grad():
+            # model works in batches of 32
+            model_input, categories = item
+            model_input = model_input.to(device)
+            answer, logits = get_label_logits(model, model_input, device)
+            time.sleep(1)
 
-        logits.tolist()
-        full_logits.extend(logits)
-        full_answers.extend(answer)
+            logits.tolist()
+            full_logits.extend(logits)
+            full_answers.extend(answer)
 
     full_logits = torch.Tensor(full_logits).to(device)
     logits = logits.reshape(-1, 4).to(device)
