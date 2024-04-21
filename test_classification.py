@@ -22,7 +22,7 @@ def get_label_logits(model, model_input, device):
     answer, logits = model.classify(model_input, len(my_bidict), logits=True)
     return answer, logits
 
-def classify_and_submit(model, data_loader, device, dataset):
+def classify_and_submit(model, data_loader, device):
     rows = []
     path = 'data/test'
     full_answers = []
@@ -44,24 +44,20 @@ def classify_and_submit(model, data_loader, device, dataset):
 
     torch.save(full_logits, 'test_logits.pt')
 
-
     # Learned from https://www.geeksforgeeks.org/writing-csv-files-in-python/
     fields = ['id', 'label']
     fid = ['fid', '26.92158564017368']
 
     filename = "submission.csv"
 
-    print("samples", dataset.samples)
-
     with open(filename, 'w') as csvfile:
         csvwriter = csv.writer(csvfile)
 
         csvwriter.writerow(fields)
 
-        i = 0
         for _, _, filenames in os.walk(path, topdown=True):
+            # https://stackoverflow.com/questions/33159106/sort-filenames-in-directory-in-ascending-order
             filenames.sort(key=lambda f: int(''.join(filter(str.isdigit, f))))
-            print(filenames)
             for i in range(0, len(filenames)):
                 csvwriter.writerow([filenames[i], str(full_answers[i])])
 
@@ -95,14 +91,12 @@ if __name__ == '__main__':
     model = PixelCNN(nr_resnet=2, nr_filters=40, 
             input_channels=3, nr_logistic_mix=5)
     
-    dataset = CPEN455Dataset(root_dir=args.data_dir, mode = args.mode, transform=ds_transforms)
-    
     model = model.to(device)
     #Attention: the path of the model is fixed to 'models/conditional_pixelcnn.pth'
     #You should save your model to this path
     model.load_state_dict(torch.load('models/conditional_pixelcnn.pth', map_location=device)) # MODIFICATION TO RUN ON CPU IF TRAINED ON GPU
     model.eval()
     print('model parameters loaded')
-    classify_and_submit(model = model, data_loader = dataloader, device = device, dataset=dataset)
+    classify_and_submit(model = model, data_loader = dataloader, device = device)
         
         
