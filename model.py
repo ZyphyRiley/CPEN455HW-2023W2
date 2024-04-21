@@ -195,6 +195,7 @@ class PixelCNN(nn.Module):
             for i in range(0, B):
                 if logits: # calculate logits for all labels
                     y_logits[i] = losses
+                    print(losses.shape)
                 else:
                     if losses[i] < y_losses[i]:
                         y_losses[i] = losses[i]
