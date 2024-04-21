@@ -40,10 +40,8 @@ def classify_and_submit(model, data_loader, device):
 
             answer = [pred.item() for pred in answer]
             answer = [int(i) for i in answer]
-            print(answer)
             full_answers.extend(answer)
 
-    print(full_answers)
     torch.save(full_logits, 'test_logits.pt')
 
 
