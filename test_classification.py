@@ -39,7 +39,9 @@ def classify_and_submit(model, data_loader, device):
             full_logits = torch.cat((full_logits, logits), 0)
             full_answers.extend(answer)
 
+    print(full_logits.shape)
     full_logits = full_logits.reshape(-1, 4).to(device)
+    full_logits = full_logits.detach().numpy()
     np.save('test_logits.npy', logits)
 
     print(len(full_answers))

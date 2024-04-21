@@ -203,7 +203,6 @@ class PixelCNN(nn.Module):
 
                 y_logits = torch.cat((y_logits, losses), 1)
 
-        print("logits:",y_logits.shape)
         if logits:
             y_losses = y_logits
 
