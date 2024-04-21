@@ -60,6 +60,8 @@ def classify_and_submit(model, data_loader, device):
         for _, _, filename in os.walk(path, topdown=True):
             csvwriter.writerow([filename, str(answer[i])])
             i += 1
+            print(i)
+            print(answer[i])
 
         csvwriter.writerow(fid)
         
