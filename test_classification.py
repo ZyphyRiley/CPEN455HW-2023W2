@@ -43,7 +43,7 @@ def classify_and_submit(model, data_loader, device):
 
     print(len(full_answers))
     i = 0
-    for _, _, filenames in os.walk(path, topdown=True):
+    for _, _, filename in os.walk(path, topdown=True):
         rows.append([filename, str(answer[i])])
         i += 1
 
