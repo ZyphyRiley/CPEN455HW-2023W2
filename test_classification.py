@@ -15,6 +15,7 @@ from pprint import pprint
 import argparse
 NUM_CLASSES = len(my_bidict)
 import csv
+import os
 
 
 def get_label_logits(model, model_input, device):
@@ -22,24 +23,45 @@ def get_label_logits(model, model_input, device):
     return answer, logits
 
 def classify_and_submit(model, data_loader, device):
+    rows = []
+    path = 'data/test'
+    full_answers = []
+    full_logits = []
+    
     model.eval()
     for batch_idx, item in enumerate(tqdm(data_loader)):
+        # model works in batches of 32
         model_input, categories = item
-        print(model_input.shape)
         model_input = model_input.to(device)
-        original_label = [my_bidict[item] for item in categories]
-        original_label = torch.tensor(original_label, dtype=torch.int64).to(device)
         answer, logits = get_label_logits(model, model_input, device)
-        correct_num = torch.sum(answer == original_label)
+        
+        logits.tolist()
+        full_logits.extend(logits)
+        full_answers.extend(answer)
 
-    print(logits.shape)
-    logits = logits.reshape(-1, 4)
+    full_logits = torch.Tensor(full_logits).to(device)
+    print("logits:", logits.shape)
+    logits = logits.reshape(-1, 4).to(device)
     np.save('test_logits.npy', logits)
+
+    print(len(full_answers))
+    i = 0
+    for _, _, filenames in os.walk(path, topdown=True):
+        rows.append([filename, str(answer[i])])
+        i += 1
 
     # Learned from https://www.geeksforgeeks.org/writing-csv-files-in-python/
     fields = ['id', 'label']
-    filename = "submission_sample.csv"
+    fid = ['fid', '26.92158564017368']
 
+    filename = "submission.csv"
+
+    with open(filename, 'w') as csvfile:
+        csvwriter = csv.writer(csvfile)
+
+        csvwriter.writerow(fields)
+        csvwriter.writerows(rows)
+        csvwriter.writerow(fid)
         
 
 if __name__ == '__main__':
@@ -74,7 +96,7 @@ if __name__ == '__main__':
     model.load_state_dict(torch.load('models/conditional_pixelcnn.pth', map_location=device)) # MODIFICATION TO RUN ON CPU IF TRAINED ON GPU
     model.eval()
     print('model parameters loaded')
-    acc = final_submission(model = model, data_loader = dataloader, device = device)
+    acc = classify_and_submit(model = model, data_loader = dataloader, device = device)
     print(f"Accuracy: {acc}")
         
         
