@@ -16,7 +16,6 @@ import argparse
 NUM_CLASSES = len(my_bidict)
 import csv
 import os
-import time
 
 
 def get_label_logits(model, model_input, device):
@@ -36,14 +35,13 @@ def classify_and_submit(model, data_loader, device):
             model_input, categories = item
             model_input = model_input.to(device)
             answer, logits = get_label_logits(model, model_input, device)
-            time.sleep(1)
 
             logits.tolist()
             full_logits.extend(logits)
             full_answers.extend(answer)
 
     full_logits = torch.Tensor(full_logits).to(device)
-    logits = logits.reshape(-1, 4).to(device)
+    full_logits = full_logits.reshape(-1, 4).to(device)
     np.save('test_logits.npy', logits)
 
     print(len(full_answers))
