@@ -46,7 +46,7 @@ def classify_and_submit(model, data_loader, device):
 
     # Learned from https://www.geeksforgeeks.org/writing-csv-files-in-python/
     fields = ['id', 'label']
-    fid = ['fid', '26.92158564017368']
+    fid = ['fid', '24.227917819822295']
 
     filename = "submission.csv"
 
