@@ -199,8 +199,11 @@ class PixelCNN(nn.Module):
 
             # for calculating the logits of every class for test_logits.npy
             if logits:
+                print("losses fr:", losses)
                 losses = losses.reshape(-1, 1)
+                print("losses after reshape", losses)
                 print("losses:",losses.shape)
+                print("logits:",y_logits.shape)
 
                 y_logits = torch.cat((y_logits, losses), 1)
 
