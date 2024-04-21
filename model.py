@@ -182,37 +182,31 @@ class PixelCNN(nn.Module):
         # initialize predictions and losses
         y_pred = torch.zeros((B, )).to(device)
         y_losses = torch.full((B, ), float('inf')).to(device)
+        y_logits = torch.Tensor().to(device)
 
-        # for calculate the logits of every class
-        if logits:
-            y_logits = torch.Tensor().to(device)
+        
+        # calculate the loss for each label
+        for key in my_bidict.keys():
+            label = (key, ) * B
+            model_output = self(x, label)
+
+            losses = (discretized_mix_logistic_loss(x, model_output, batch=False)).to(device)
             
-            for key in my_bidict.keys():
-                label = (key, ) * B
-                model_output = self(x, label)
+            for i in range(0, B):
+                if losses[i] < y_losses[i]:
+                    y_losses[i] = losses[i]
+                    y_pred[i] = my_bidict[key]
 
-                losses = (discretized_mix_logistic_loss(x, model_output, batch=False)).to(device)
+            # for calculating the logits of every class for test_logits.npy
+            if logits:
                 losses = losses.reshape(-1, 1)
                 print("losses:",losses.shape)
 
                 y_logits = torch.cat((y_logits, losses), 1)
 
-            print("logits:",y_logits.shape)
-
-            return y_logits
-
-        else:
-            # calculate the loss for each label
-            for key in my_bidict.keys():
-                label = (key, ) * B
-                model_output = self(x, label)
-
-                losses = (discretized_mix_logistic_loss(x, model_output, batch=False)).to(device)
-                
-                for i in range(0, B):
-                    if losses[i] < y_losses[i]:
-                        y_losses[i] = losses[i]
-                        y_pred[i] = my_bidict[key]
+        print("logits:",y_logits.shape)
+        if logits:
+            y_losses = y_logits
 
         return y_pred, y_losses
     
