@@ -51,6 +51,8 @@ def classify_and_submit(model, data_loader, device):
 
     filename = "submission.csv"
 
+    print("samples", dataset.samples)
+
     with open(filename, 'w') as csvfile:
         csvwriter = csv.writer(csvfile)
 
@@ -58,6 +60,8 @@ def classify_and_submit(model, data_loader, device):
 
         i = 0
         for _, _, filenames in os.walk(path, topdown=True):
+            filenames.sort(key=lambda f: int(''.join(filter(str.isdigit, f))))
+            print(filenames)
             for i in range(0, len(filenames)):
                 csvwriter.writerow([filenames[i], str(full_answers[i])])
 
