@@ -40,7 +40,6 @@ def classify_and_submit(model, data_loader, device):
         full_answers.extend(answer)
 
     full_logits = torch.Tensor(full_logits).to(device)
-    print("logits:", logits.shape)
     logits = logits.reshape(-1, 4).to(device)
     np.save('test_logits.npy', logits)
 
